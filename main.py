@@ -154,7 +154,7 @@ class Agent:
             game.selOption = o
             frame = game.get_frame()
             frame = np.array(frame)
-            prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device))
+            prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, game.num_lines, game.ideWidth*3))
             reqs.append(prediction.cpu().detach())
 
         return reqs
@@ -163,7 +163,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=3 / 4, observe=0, checkpoint=10,
+    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=2 / 4, observe=0, checkpoint=10,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -294,8 +294,9 @@ class Agent:
                             if checkViewScore(view, scoreWeight):
                                 #modelsGen.trainInput(view, scoreWeight)
                                 self.optim.zero_grad()
-                                pred = model(torch.tensor(view, dtype=torch.float32).to(device=device))
+                                pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, game.num_lines, game.ideWidth*3))
                                 err = self.loss(pred, torch.tensor(scoreWeight, dtype=torch.float32).to(device=device))
+                                loss += float(err)
                                 err.backward()
                                 self.optim.step()
 
@@ -320,8 +321,9 @@ class Agent:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
                         self.optim.zero_grad()
-                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device))
+                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, game.num_lines, game.ideWidth*3))
                         err = self.loss(pred, torch.tensor(linesScores[i], dtype=torch.float32).to(device=device))
+                        loss += float(err)
                         err.backward()
                         self.optim.step()
 
@@ -359,9 +361,10 @@ class Agent:
                         epoch = 0
                     observeModel = True
 
-            #loss /= cycles
-            # loss /= upTo
-            #accuracy /= cycles
+            if cycles > 0:
+                loss /= cycles
+                #loss /= upTo
+                accuracy /= cycles
 
             avgTotalIsolatedLines = (avgTotalIsolatedLines + avgNumberIsolatedLines) / 2
             myPrint("avgTotalIsolatedLines: ", avgTotalIsolatedLines)
@@ -388,7 +391,7 @@ class Agent:
                     myPrint("random")
                     action = int(np.random.randint(0, game.nb_actions))
                 else:
-                    q = model(np.array([S]))
+                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, game.num_lines, game.ideWidth*3))
                     q = q[0]
 
                     possible_actions = game.get_possible_actions()
@@ -1782,8 +1785,10 @@ grid_size = 300
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
+totalDim = game.ideWidth*3
+
 """## Run"""
-model = SuccessPredictorLSTM(3, 1024, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
 
 agent = Agent(model, input_shape, (1))
 agent.train(game)
