@@ -357,9 +357,9 @@ class Agent:
                         epoch = 0
                     observeModel = True
 
-            loss /= cycles
+            #loss /= cycles
             # loss /= upTo
-            accuracy /= cycles
+            #accuracy /= cycles
 
             avgTotalIsolatedLines = (avgTotalIsolatedLines + avgNumberIsolatedLines) / 2
             myPrint("avgTotalIsolatedLines: ", avgTotalIsolatedLines)
@@ -1776,7 +1776,7 @@ class Calculon(Game):
 ### Execution
 
 actions = 1
-grid_size = 200
+grid_size = 300
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
