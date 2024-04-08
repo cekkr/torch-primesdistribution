@@ -311,7 +311,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1
+                lineVal = (game.focus_y/game.num_lines)**1.25
                 if lineVal > posVal:
                     game_over = True
 
@@ -1785,14 +1785,14 @@ class Calculon(Game):
 ### Execution
 
 actions = 1
-grid_size = 100
+grid_size = 50
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
 totalDim = game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 1024, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
