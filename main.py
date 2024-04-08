@@ -128,7 +128,7 @@ class Agent:
         self.model = model
 
         self.loss = torch.nn.L1Loss()
-        self.optim = optim.AdamW(model.parameters(), lr=0.01, weight_decay=1e-4)
+        self.optim = optim.AdamW(model.parameters(), lr=0.1, weight_decay=1e-4)
 
         self.fileTraining = './outputTrain.txt'
         self.dirOutputs = './outputs/'
@@ -1781,14 +1781,14 @@ class Calculon(Game):
 ### Execution
 
 actions = 1
-grid_size = 300
+grid_size = 100
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
 totalDim = game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 1024, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
 
 agent = Agent(model, input_shape, (1))
 agent.train(game)
