@@ -25,6 +25,8 @@ from main.model import *
 import torch.optim as optim
 import torch
 
+device = 'mps:0'
+
 """## Costum classes"""
 
 myFloat = np.double
@@ -293,8 +295,8 @@ class Agent:
                             if checkViewScore(view, scoreWeight):
                                 #modelsGen.trainInput(view, scoreWeight)
                                 self.optim.zero_grad()
-                                pred = model(torch.tensor(view, dtype=torch.float32))
-                                err = self.loss(pred, torch.tensor(scoreWeight))
+                                pred = model(torch.tensor(view, dtype=torch.float32).to(device=device))
+                                err = self.loss(pred, torch.tensor(scoreWeight, dtype=torch.float32).to(device=device))
                                 err.backward()
                                 self.optim.step()
 
@@ -316,8 +318,8 @@ class Agent:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
                         self.optim.zero_grad()
-                        pred = model(torch.tensor(view, dtype=torch.float32))
-                        err = self.loss(pred, torch.tensor(linesScores[i]))
+                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device))
+                        err = self.loss(pred, torch.tensor(linesScores[i], dtype=torch.float32).to(device=device))
                         err.backward()
                         self.optim.step()
 
@@ -1779,7 +1781,7 @@ game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
 """## Run"""
-model = SuccessPredictorLSTM(3, 128, 1)
+model = SuccessPredictorLSTM(3, 1024, 1, device=device).to(device=device)
 
 agent = Agent(model, input_shape, (1))
 agent.train(game)
