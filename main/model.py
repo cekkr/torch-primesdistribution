@@ -16,8 +16,8 @@ class SuccessPredictorLSTM(nn.Module):
 
     def forward(self, input_seq):
         # Initializing hidden state for first input using method defined below
-        hidden_cell = (torch.zeros(1, input_seq.size(0), self.hidden_layer_size),
-                       torch.zeros(1, input_seq.size(0), self.hidden_layer_size))
+        hidden_cell = (torch.zeros(1, input_seq.shape[0], self.hidden_layer_size),
+                       torch.zeros(1, input_seq.shape[0], self.hidden_layer_size))
 
         # Forward pass through LSTM layer
         # lstm_out shape: (batch_size, seq_length, hidden_layer_size)
@@ -31,6 +31,9 @@ class SuccessPredictorLSTM(nn.Module):
         predictions = torch.sigmoid(self.linear(lstm_out))
 
         return predictions
+
+    def save(self, where):
+        torch.save(self.state_dict(), '%s/model.pth' % (where))
 
 # Assume `input_array` is your input numpy array of shape (batch_size, 200, 7)
 # Convert the numpy array to a PyTorch tensor

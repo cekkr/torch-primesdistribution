@@ -9,8 +9,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.image as img
-from random import sample
 
 import random
 import math
@@ -22,7 +20,7 @@ import gc
 
 from datetime import datetime
 
-from .model import *
+from main.model import *
 
 import torch.optim as optim
 import torch
@@ -33,7 +31,7 @@ myFloat = np.double
 if hasattr(np, 'float128'):
     myFloat = np.float128
 
-output = open(config.currentDir + "output.txt", "w")
+output = open("./output.txt", "w")
 lastPrintNewLine = True
 
 
@@ -118,17 +116,20 @@ batch_size = 30
 
 class Agent:
 
-    def __init__(self, modelsGen, input_shape, output_shape):
+    def __init__(self, model, input_shape, output_shape):
         self.input_shape = input_shape
         myPrint("input_shape: ", self.input_shape)
 
         self.output_shape = output_shape
         myPrint("output_shape: ", self.output_shape)
 
-        self.modelsGen = modelsGen
+        self.model = model
 
         self.loss = torch.nn.L1Loss()
-        self.optim = optim.AdamW(modelsGen.parameters(), lr=0.001, weight_decay=1e-4)
+        self.optim = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+
+        self.fileTraining = './outputTrain.txt'
+        self.dirOutputs = './outputs/'
 
     def get_game_data(self, game):
         frame = game.get_frame()
@@ -292,8 +293,8 @@ class Agent:
                             if checkViewScore(view, scoreWeight):
                                 #modelsGen.trainInput(view, scoreWeight)
                                 self.optim.zero_grad()
-                                pred = model(view)
-                                err = self.loss(pred, scoreWeight)
+                                pred = model(torch.tensor(view, dtype=torch.float32))
+                                err = self.loss(pred, torch.tensor(scoreWeight))
                                 err.backward()
                                 self.optim.step()
 
@@ -315,8 +316,8 @@ class Agent:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
                         self.optim.zero_grad()
-                        pred = model(view)
-                        err = self.loss(pred, linesScores[i])
+                        pred = model(torch.tensor(view, dtype=torch.float32))
+                        err = self.loss(pred, torch.tensor(linesScores[i]))
                         err.backward()
                         self.optim.step()
 
@@ -325,7 +326,7 @@ class Agent:
             gc.collect()
 
             if checkpoint and ((epoch + 1 - observe) % checkpoint == 0 or epoch >= nb_epoch):
-                model.save_weights(self.fileWeights)
+                model.save(self.dirOutputs)
 
                 save = {
                     'delta': delta,
@@ -1692,7 +1693,7 @@ class Calculon(Game):
 
             canvas.append(line)
 
-        return np.array(canvas, dtype=np.uint)
+        return np.array(canvas, dtype=np.int32)
 
     def get_score(self):
         # Execute instructions
@@ -1778,8 +1779,8 @@ game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
 """## Run"""
-model = SuccessPredictorLSTM(game.ideWidth, 128, 1)
+model = SuccessPredictorLSTM(3, 128, 1)
 
-agent = Agent(model)
+agent = Agent(model, input_shape, (1))
 agent.train(game)
 agent.play(game)
