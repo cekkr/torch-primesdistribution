@@ -1,0 +1,1 @@
+{"delta": 0.00013333333333333334, "epsilon": 0.9910666666666677, "final_epsilon": 0, "epoch": 69, "nb_epoch": 10000, "observeModel": false, "limitTrainingCount": 99999, "avgTotalIsolatedLines": 0.26094199811083774, "bestScore": 0.007431279127795287, "bestScoreLines": 1}

@@ -153,22 +153,17 @@ class Agent:
         for o in range(0, game.optionsLen):
             game.selOption = o
             frame = game.get_frame()
-            reqs.append(frame)
+            frame = np.array(frame)
+            prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device))
+            reqs.append(prediction.cpu().detach())
 
-        reqs = np.array(reqs)
-        prediction = self.model.predict(np.array(reqs))
-
-        res = []
-        for p in prediction:
-            res.append(p[0])
-
-        return res
+        return reqs
 
     def checkRamUsage(self):
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=2000, epsilon=[1., 0], epsilon_rate=3 / 4, observe=0, checkpoint=10,
+    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=3 / 4, observe=0, checkpoint=10,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -203,9 +198,13 @@ class Agent:
             limitTrainingCount = lastTrain['limitTrainingCount']
             avgTotalIsolatedLines = lastTrain['avgTotalIsolatedLines']
             bestScore = lastTrain['bestScore']
-            bestScoreLines = lastTrain['bestScoreLine']
-
+            bestScoreLines = lastTrain['bestScoreLines']
+        
         while epoch < nb_epoch:
+            posVal = epoch/(nb_epoch/2)
+            if posVal > 1:
+                posVal = 1
+
             epoch += 1
 
             loss = 0.
@@ -307,6 +306,9 @@ class Agent:
                                 linesScores[i] = scoreWeight
 
                     game_over = game.is_over()
+                
+                if game.focus_y > (game.num_lines*posVal):
+                    game_over = True
 
             # Train the best scores of the total script
             totElements = 0
