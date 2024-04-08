@@ -163,7 +163,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=1/4, observe=0, checkpoint=10,
+    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=2/5, observe=0, checkpoint=10,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -201,7 +201,7 @@ class Agent:
             bestScoreLines = lastTrain['bestScoreLines']
         
         while epoch < nb_epoch:
-            posVal = epoch/(nb_epoch/2)
+            posVal = epoch/(nb_epoch)
             if posVal > 1:
                 posVal = 1
 
