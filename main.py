@@ -128,7 +128,7 @@ class Agent:
         self.model = model
 
         self.loss = torch.nn.L1Loss()
-        self.optim = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+        self.optim = optim.AdamW(model.parameters(), lr=0.01, weight_decay=1e-4)
 
         self.fileTraining = './outputTrain.txt'
         self.dirOutputs = './outputs/'
@@ -163,7 +163,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=2 / 4, observe=0, checkpoint=10,
+    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=1/4, observe=0, checkpoint=10,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -1788,7 +1788,7 @@ input_shape = (grid_size, game.ideWidth, 3)
 totalDim = game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 1024, 1, device=device).to(device=device)
 
 agent = Agent(model, input_shape, (1))
 agent.train(game)
