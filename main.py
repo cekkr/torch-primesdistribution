@@ -69,7 +69,7 @@ def is_prime(num):
     return True
 
 
-upTo = 10000  # 10.000
+upTo = 20000  # 20.000
 
 numIsPrime = []
 
@@ -163,7 +163,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=10000, epsilon=[1., 0], epsilon_rate=2/5, observe=0, checkpoint=10,
+    def train(self, game, nb_epoch=5000, epsilon=[1., 0], epsilon_rate=3/4, observe=0, checkpoint=10,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -307,8 +307,9 @@ class Agent:
                                 linesScores[i] = scoreWeight
 
                     game_over = game.is_over()
-                
-                if game.focus_y > (game.num_lines*posVal):
+
+                lineVal = (game.focus_y/game.num_lines)**1
+                if lineVal > posVal:
                     game_over = True
 
             # Train the best scores of the total script
@@ -1665,7 +1666,7 @@ class Calculon(Game):
         canvas = []
 
         elNumber = 0
-        for y in range(0, self.num_lines):
+        for y in range(0, self.focus_y): # or self.num_lines
             elNumber += 1
             line = []
 
@@ -1788,7 +1789,11 @@ input_shape = (grid_size, game.ideWidth, 3)
 totalDim = game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 1024, 1, device=device).to(device=device)
+
+if os.path.exists('outputs/model.pth'):
+    model.load_state_dict(torch.load('outputs/model.pth'))
+
 
 agent = Agent(model, input_shape, (1))
 agent.train(game)
