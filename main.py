@@ -127,7 +127,7 @@ class Agent:
 
         self.model = model
 
-        self.loss = torch.nn.L1Loss()
+        self.loss = torch.nn.MSELoss()
         self.optim = optim.AdamW(model.parameters(), lr=0.1, weight_decay=1e-4)
 
         self.fileTraining = './outputTrain.txt'
@@ -164,7 +164,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=50000, epsilon=[1., 0], epsilon_rate=3/4, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=50000, epsilon=[0.75, 0], epsilon_rate=3/4, observe=0, checkpoint=100,
               weighedScore=True):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -295,13 +295,16 @@ class Agent:
                         for i in range(0, game.countInstructionsElements(isolatedInstructions)):
                             view = game.get_state(i + 1, isolatedInstructions)
                             if checkViewScore(view, scoreWeight):
-                                #modelsGen.trainInput(view, scoreWeight)
-                                self.optim.zero_grad()
-                                pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
-                                err = self.loss(pred, torch.tensor(scoreWeight, dtype=torch.float32).to(device=device))
-                                loss += float(err)
-                                err.backward()
-                                self.optim.step()
+                                err = 2
+                                while err > 1:
+                                    #modelsGen.trainInput(view, scoreWeight)
+                                    self.optim.zero_grad()
+                                    pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
+                                    err = self.loss(pred, torch.tensor(scoreWeight, dtype=torch.float32).to(device=device))
+                                    loss += float(err)
+                                    err.backward()
+                                    self.optim.step()
+                                    print("Train with loss ", err)
 
 
                         # Save working lines max score
