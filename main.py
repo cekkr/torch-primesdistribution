@@ -127,9 +127,9 @@ class Agent:
 
         self.model = model
 
-        self.loss = torch.nn.L1Loss()
+        self.loss = torch.nn.MSELoss()
 
-        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.001, weight_decay=1e-6)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.01, weight_decay=1e-6)
 
         for name, param in model.named_parameters():
             if param.requires_grad:
@@ -278,7 +278,7 @@ class Agent:
                                 file.write(json.dumps(isolatedInstructions))
 
                         scoreWeight = score
-                        if weighedScore and score > 0:
+                        if weighedScore and score > 0 and False:
                             lineWeight = len(isolatedInstructions) * score
                             avgNumberIsolatedLines = (avgNumberIsolatedLines * avgNumberIsolatedLinesCount) + lineWeight
                             avgNumberIsolatedLinesCount += score
@@ -321,7 +321,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1.25
+                lineVal = (game.focus_y/game.num_lines)**1.5
                 if lineVal > posVal:
                     game_over = True
 
