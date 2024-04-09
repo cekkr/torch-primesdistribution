@@ -1672,7 +1672,7 @@ class Calculon(Game):
         canvas = []
 
         elNumber = 0
-        for y in range(0, self.focus_y): # or self.num_lines
+        for y in range(0, self.focus_y+1): # or self.num_lines
             elNumber += 1
             line = []
 
