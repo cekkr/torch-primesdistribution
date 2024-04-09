@@ -1,1 +1,1 @@
-{"delta": 4e-05, "epsilon": 0.7261599999999762, "final_epsilon": 0, "epoch": 599, "nb_epoch": 25000, "observeModel": false, "limitTrainingCount": 99999, "avgTotalIsolatedLines": 5.783807676246922e-179, "bestScore": 0.9260271783215924, "bestScoreLines": 1}
+{"delta": 4e-05, "epsilon": 0.21807999999983715, "final_epsilon": 0, "epoch": 13299, "nb_epoch": 25000, "observeModel": false, "limitTrainingCount": 99999, "avgTotalIsolatedLines": 0.0, "bestScore": 0.9604320199024509, "bestScoreLines": 5}

@@ -129,7 +129,7 @@ class Agent:
 
         self.loss = torch.nn.L1Loss()
 
-        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.1, weight_decay=1e-6)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.001, weight_decay=1e-6)
 
         for name, param in model.named_parameters():
             if param.requires_grad:
@@ -488,14 +488,14 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = ['IF', 'END']
+alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
 ## Operations
 """
 
-neutralOps = ['ASSIGN', 'DEFAULT']
+neutralOps = ['ASSIGN'] # 'DEFAULT' (what is used for?)
 labels.extend(neutralOps)
 
 decimalOps = []
