@@ -20,12 +20,12 @@ import gc
 
 from datetime import datetime
 
-from main.model import *
+from main import *
 
 import torch.optim as optim
 import torch
 
-device = 'mps:0'
+device = 'cpu'
 
 """## Costum classes"""
 
@@ -129,8 +129,11 @@ class Agent:
 
         self.loss = torch.nn.L1Loss()
 
-        params = model.parameters()
-        self.optim = optim.SGD(params, lr=0.1, weight_decay=1e-6)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.1, weight_decay=1e-6)
+
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                print(f"Layer: {name}, Size: {param.size()}")
 
         self.fileTraining = './outputTrain.txt'
         self.dirOutputs = './outputs/'
@@ -157,7 +160,7 @@ class Agent:
             frame = game.get_frame()
             frame = np.array(frame)
             if frame.shape[0] > 0:
-                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0], game.ideWidth*3))
+                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0]* game.ideWidth*3))
                 reqs.append(prediction.cpu().detach())
 
         return reqs
@@ -300,9 +303,10 @@ class Agent:
                                 err = 2
                                 while err > 1:
                                     #modelsGen.trainInput(view, scoreWeight)
-                                    #self.optim.zero_grad()
-                                    pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
-                                    target = torch.tensor([scoreWeight], dtype=torch.float32).to(device=device)
+                                    self.optim.zero_grad()
+                                    tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*3)
+                                    pred = model(tensor)
+                                    target = torch.tensor([[scoreWeight]], dtype=torch.float32).to(device=device)
                                     err = self.loss(pred, target)
                                     err.backward()
                                     self.optim.step()
@@ -330,9 +334,9 @@ class Agent:
                 if linesScores[i] > 0:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
-                        #self.optim.zero_grad()
-                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
-                        err = self.loss(pred, torch.tensor([linesScores[i]], dtype=torch.float32).to(device=device))
+                        self.optim.zero_grad()
+                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*3))
+                        err = self.loss(pred, torch.tensor([[linesScores[i]]], dtype=torch.float32).to(device=device))
                         err.backward()
                         self.optim.step()
                         loss += float(err)
@@ -401,7 +405,7 @@ class Agent:
                     myPrint("random")
                     action = int(np.random.randint(0, game.nb_actions))
                 else:
-                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0], game.ideWidth*3))
+                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0]* game.ideWidth*3))
                     q = q[0]
 
                     possible_actions = game.get_possible_actions()
@@ -1675,7 +1679,7 @@ class Calculon(Game):
         canvas = []
 
         elNumber = 0
-        for y in range(0, self.focus_y+1): # or self.num_lines
+        for y in range(0, self.num_lines): # or self.focus_y+1
             elNumber += 1
             line = []
 
@@ -1795,10 +1799,10 @@ grid_size = 30
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, 3)
 
-totalDim = game.ideWidth*3
+totalDim = grid_size*game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 2048, 1, device=device).to(device=device)
+model = SuccessPredictorLinear(totalDim, 2048, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
