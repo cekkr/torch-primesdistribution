@@ -185,7 +185,7 @@ class Agent:
 
         avgTotalIsolatedLines = game.num_lines / 2
 
-        bestScore = 0
+        bestScore = 0.5
         bestScoreLines = 0
 
         lastTrain = self.readJson(self.fileTraining)
