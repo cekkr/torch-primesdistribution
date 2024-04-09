@@ -127,8 +127,10 @@ class Agent:
 
         self.model = model
 
-        self.loss = torch.nn.MSELoss()
-        self.optim = optim.AdamW(model.parameters(), lr=0.1, weight_decay=1e-4)
+        self.loss = torch.nn.L1Loss()
+
+        params = model.parameters()
+        self.optim = optim.SGD(params, lr=0.1, weight_decay=1e-6)
 
         self.fileTraining = './outputTrain.txt'
         self.dirOutputs = './outputs/'
@@ -164,8 +166,8 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=50000, epsilon=[0.75, 0], epsilon_rate=3/4, observe=0, checkpoint=100,
-              weighedScore=True):
+    def train(self, game, nb_epoch=25000, epsilon=[0.75, 0], epsilon_rate=3/4, observe=0, checkpoint=100,
+              weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
             final_epsilon = epsilon[1]
@@ -298,12 +300,13 @@ class Agent:
                                 err = 2
                                 while err > 1:
                                     #modelsGen.trainInput(view, scoreWeight)
-                                    self.optim.zero_grad()
+                                    #self.optim.zero_grad()
                                     pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
-                                    err = self.loss(pred, torch.tensor(scoreWeight, dtype=torch.float32).to(device=device))
-                                    loss += float(err)
+                                    target = torch.tensor([scoreWeight], dtype=torch.float32).to(device=device)
+                                    err = self.loss(pred, target)
                                     err.backward()
                                     self.optim.step()
+                                    loss += float(err)
                                     print("Train with loss ", err)
 
 
@@ -314,7 +317,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1
+                lineVal = (game.focus_y/game.num_lines)**1.25
                 if lineVal > posVal:
                     game_over = True
 
@@ -327,12 +330,12 @@ class Agent:
                 if linesScores[i] > 0:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
-                        self.optim.zero_grad()
+                        #self.optim.zero_grad()
                         pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*3))
-                        err = self.loss(pred, torch.tensor(linesScores[i], dtype=torch.float32).to(device=device))
-                        loss += float(err)
+                        err = self.loss(pred, torch.tensor([linesScores[i]], dtype=torch.float32).to(device=device))
                         err.backward()
                         self.optim.step()
+                        loss += float(err)
 
                 totElements += instrLen
 

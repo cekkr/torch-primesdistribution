@@ -1,8 +1,0 @@
-04/09/2024, 06:59:03: First 20000 numbers calculated
-04/09/2024, 06:59:03: Distribution calculated (19999)
-04/09/2024, 06:59:03: Written line: ['WELCOME :)']   -1/30
-04/09/2024, 06:59:03: Reset
-04/09/2024, 06:59:03: input_shape: (30, 7, 3)
-04/09/2024, 06:59:03: output_shape: 1
-04/09/2024, 06:59:05: Written line: ['WELCOME :)']   -1/30
-04/09/2024, 06:59:05: Reset
