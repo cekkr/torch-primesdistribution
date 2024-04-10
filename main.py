@@ -160,7 +160,7 @@ class Agent:
             frame = game.get_frame()
             frame = np.array(frame)
             if frame.shape[0] > 0:
-                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0]* game.ideWidth*3))
+                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0]* game.ideWidth*2))
                 reqs.append(prediction.cpu().detach())
 
         return reqs
@@ -304,7 +304,7 @@ class Agent:
                                 while err > 1:
                                     #modelsGen.trainInput(view, scoreWeight)
                                     self.optim.zero_grad()
-                                    tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*3)
+                                    tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2)
                                     pred = model(tensor)
                                     target = torch.tensor([[scoreWeight]], dtype=torch.float32).to(device=device)
                                     err = self.loss(pred, target)
@@ -335,7 +335,7 @@ class Agent:
                     for u in range(totElements, totElements + instrLen):
                         view = game.get_state(u + 1)
                         self.optim.zero_grad()
-                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*3))
+                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2))
                         err = self.loss(pred, torch.tensor([[linesScores[i]]], dtype=torch.float32).to(device=device))
                         err.backward()
                         self.optim.step()
@@ -405,7 +405,7 @@ class Agent:
                     myPrint("random")
                     action = int(np.random.randint(0, game.nb_actions))
                 else:
-                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0]* game.ideWidth*3))
+                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0]* game.ideWidth*2))
                     q = q[0]
 
                     possible_actions = game.get_possible_actions()
@@ -495,7 +495,7 @@ labels.extend(alternativeStartInstruction)
 ## Operations
 """
 
-neutralOps = ['DEFAULT'] # 'ASSIGN'
+neutralOps = ['DEFAULT', 'ASSIGN'] # ASSIGN removed after
 labels.extend(neutralOps)
 
 decimalOps = []
