@@ -69,7 +69,7 @@ def is_prime(num):
     return True
 
 
-upTo = 10000  # 50.000
+upTo = 1000  # 50.000
 
 numIsPrime = []
 
@@ -129,7 +129,7 @@ class Agent:
 
         self.loss = torch.nn.MSELoss()
 
-        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.01, weight_decay=1e-6)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.1, weight_decay=1e-6)
 
         for name, param in model.named_parameters():
             if param.requires_grad:
@@ -169,7 +169,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=50000, epsilon=[1.0, 0.0], epsilon_rate=3/4, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=100000, epsilon=[0.75, 0.0], epsilon_rate=3/4, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -190,7 +190,7 @@ class Agent:
 
         avgTotalIsolatedLines = game.num_lines / 2
 
-        bestScore = 0.95
+        bestScore = 0.90
         bestScoreLines = 0
 
         lastTrain = self.readJson(self.fileTraining)
@@ -297,11 +297,12 @@ class Agent:
                                     scoreWeight,
                                     "\t avgLines:", avgNumberIsolatedLines)
 
+                        print("Working on score ", scoreWeight)
                         for i in range(0, game.countInstructionsElements(isolatedInstructions)):
                             view = game.get_state(i + 1, isolatedInstructions)
                             if checkViewScore(view, scoreWeight):
-                                err = 2
-                                while err > 1:
+                                repeat = int((20 * scoreWeight)+1)
+                                for r in range(0, repeat):
                                     #modelsGen.trainInput(view, scoreWeight)
                                     self.optim.zero_grad()
                                     tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2)
@@ -1735,7 +1736,7 @@ class Calculon(Game):
         if self.current_score == 1:
             self.checkGameEnd()
 
-        pow = self.current_score ** 3
+        pow = self.current_score ** 5
         return pow
 
     def reset(self):
@@ -1802,14 +1803,14 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 50
+grid_size = 35
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
 totalDim = grid_size*game.ideWidth*els
 
 """## Run"""
-model = SuccessPredictorLinear(totalDim, 1024, 1, device=device).to(device=device)
+model = SuccessPredictorLinear(totalDim, 512, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
