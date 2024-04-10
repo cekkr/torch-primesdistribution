@@ -69,7 +69,7 @@ def is_prime(num):
     return True
 
 
-upTo = 20000  # 20.000
+upTo = 10000  # 50.000
 
 numIsPrime = []
 
@@ -1735,7 +1735,8 @@ class Calculon(Game):
         if self.current_score == 1:
             self.checkGameEnd()
 
-        return self.current_score
+        pow = self.current_score ** 3
+        return pow
 
     def reset(self):
         self.instructions = []
@@ -1808,7 +1809,7 @@ input_shape = (grid_size, game.ideWidth, els)
 totalDim = grid_size*game.ideWidth*els
 
 """## Run"""
-model = SuccessPredictorLinear(totalDim, 512, 1, device=device).to(device=device)
+model = SuccessPredictorLinear(totalDim, 1024, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
