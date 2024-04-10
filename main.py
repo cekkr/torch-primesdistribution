@@ -1678,6 +1678,8 @@ class Calculon(Game):
         # Draw the current view
         canvas = []
 
+        drawFocus = False
+
         elNumber = 0
         for y in range(0, self.num_lines): # or self.focus_y+1
             elNumber += 1
@@ -1692,20 +1694,21 @@ class Calculon(Game):
 
             for x in range(startFrom, self.ideWidth):
                 xx = x - startFrom
-                pixel = [0, 0, 0]
+                pixel = [0, 0, 0] if drawFocus else [0, 0]
 
                 def setPixelVal(val):
                     isNum = isinstance(val, int)
 
                     if isNum:
-                        pixel[1] = 1
+                        pixel[1 if drawFocus else 0] = 1
                     else:
                         val = labels.index(val)
 
-                    pixel[2] = val
+                    pixel[2 if drawFocus else 1] = val
 
                 if elNumber == until or (until == totElements and y == self.focus_y and xx == self.focus_x):
-                    pixel[0] = 1
+                    if drawFocus:
+                        pixel[0] = 1
                     setPixelVal(self.options[self.selOption])
                 elif elNumber < until and xx < len(instruction):
                     setPixelVal(instruction[xx])
@@ -1802,7 +1805,7 @@ input_shape = (grid_size, game.ideWidth, 3)
 totalDim = grid_size*game.ideWidth*3
 
 """## Run"""
-model = SuccessPredictorLinear(totalDim, 2048, 1, device=device).to(device=device)
+model = SuccessPredictorLinear(totalDim, 1024, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
