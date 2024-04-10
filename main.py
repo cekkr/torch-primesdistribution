@@ -322,7 +322,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1.5
+                lineVal = (game.focus_y/game.num_lines)**2
                 if lineVal > posVal:
                     game_over = True
 
@@ -1803,7 +1803,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 60
+grid_size = 80
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 

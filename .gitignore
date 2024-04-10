@@ -1,4 +1,6 @@
 model.pth
+output.txt
+outputTrain.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
