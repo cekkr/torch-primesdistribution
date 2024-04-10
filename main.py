@@ -25,7 +25,7 @@ from main import *
 import torch.optim as optim
 import torch
 
-device = 'cpu'
+device = 'cuda'
 
 """## Costum classes"""
 
@@ -349,16 +349,16 @@ class Agent:
                 model.save(self.dirOutputs)
 
                 save = {
-                    'delta': delta,
-                    'epsilon': epsilon,
-                    'final_epsilon': final_epsilon,
+                    'delta': float(delta),
+                    'epsilon': float(epsilon),
+                    'final_epsilon': float(final_epsilon),
                     'epoch': epoch,
                     'nb_epoch': nb_epoch,
                     'observeModel': observeModel,
                     'limitTrainingCount': limitTrainingCount,
-                    'avgTotalIsolatedLines': avgTotalIsolatedLines,
-                    'bestScore': bestScore,
-                    'bestScoreLines': bestScoreLines
+                    'avgTotalIsolatedLines': float(avgTotalIsolatedLines),
+                    'bestScore': float(bestScore),
+                    'bestScoreLines': float(bestScoreLines)
                 }
 
                 self.saveJson(self.fileTraining, save)
