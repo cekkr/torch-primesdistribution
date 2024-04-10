@@ -495,7 +495,7 @@ labels.extend(alternativeStartInstruction)
 ## Operations
 """
 
-neutralOps = ['ASSIGN'] # 'DEFAULT' (what is used for?)
+neutralOps = ['DEFAULT'] # 'ASSIGN'
 labels.extend(neutralOps)
 
 decimalOps = []
@@ -1797,12 +1797,15 @@ class Calculon(Game):
 
 ### Execution
 
+drawFocus = False
+els = 3 if drawFocus else 2
+
 actions = 1
 grid_size = 30
 game = Calculon(grid_size)
-input_shape = (grid_size, game.ideWidth, 3)
+input_shape = (grid_size, game.ideWidth, els)
 
-totalDim = grid_size*game.ideWidth*3
+totalDim = grid_size*game.ideWidth*els
 
 """## Run"""
 model = SuccessPredictorLinear(totalDim, 1024, 1, device=device).to(device=device)
