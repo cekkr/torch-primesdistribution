@@ -10,8 +10,13 @@ class SuccessPredictorLinear(nn.Module):
 
         # Output layer
         self.linear1 = nn.Linear(input_size, hidden_layer_size)
-        self.linear2 = nn.Linear(hidden_layer_size, hidden_layer_size)
-        #self.linear3 = nn.Linear(hidden_layer_size, hidden_layer_size)
+
+        self.seq = torch.nn.Sequential()
+
+        nlayers = 5
+        for n in range(0, nlayers):
+            self.seq.append(nn.Linear(hidden_layer_size, hidden_layer_size))
+
         self.linear4 = nn.Linear(hidden_layer_size, output_size)
 
         self.activation = torch.nn.Sigmoid()
@@ -20,8 +25,7 @@ class SuccessPredictorLinear(nn.Module):
 
     def forward(self, input_seq):
         x = self.linear1(input_seq)
-        x = self.linear2(x)
-        #x = self.linear3(x)
+        x = self.seq(x)
         x = self.linear4(x)
 
         x = self.activation(x)
