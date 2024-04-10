@@ -169,7 +169,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=25000, epsilon=[0.75, 0], epsilon_rate=3/4, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=50000, epsilon=[1.0, 0.0], epsilon_rate=3/4, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -1801,7 +1801,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 30
+grid_size = 40
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
