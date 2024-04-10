@@ -129,7 +129,7 @@ class Agent:
 
         self.loss = torch.nn.MSELoss()
 
-        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.01, weight_decay=1e-6)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.1, weight_decay=1e-6)
 
         for name, param in model.named_parameters():
             if param.requires_grad:
