@@ -13,7 +13,7 @@ class SuccessPredictorLinear(nn.Module):
 
         self.seq = torch.nn.Sequential()
 
-        nlayers = 5
+        nlayers = 10
         for n in range(0, nlayers):
             self.seq.append(nn.Linear(hidden_layer_size, hidden_layer_size))
 

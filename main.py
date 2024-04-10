@@ -190,7 +190,7 @@ class Agent:
 
         avgTotalIsolatedLines = game.num_lines / 2
 
-        bestScore = 0.5
+        bestScore = 0.95
         bestScoreLines = 0
 
         lastTrain = self.readJson(self.fileTraining)
@@ -1801,14 +1801,14 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 40
+grid_size = 50
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
 totalDim = grid_size*game.ideWidth*els
 
 """## Run"""
-model = SuccessPredictorLinear(totalDim, 1024, 1, device=device).to(device=device)
+model = SuccessPredictorLinear(totalDim, 512, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
