@@ -171,7 +171,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=100000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=1000,
+    def train(self, game, nb_epoch=1000000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=1000,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -260,7 +260,7 @@ class Agent:
                         while retry:
                             a = int(np.random.randint(options))
                             if a == game.options.index('IF'):
-                                retry = int(np.random.randint(4)) > 0
+                                retry = int(np.random.randint(5)) > 0
                             else:
                                 retry = False
                     else:
@@ -335,7 +335,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1.25
+                lineVal = (game.focus_y/game.num_lines)**2
                 if lineVal > posVal:
                     game_over = True
 
@@ -503,7 +503,7 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = ['IF', 'END'] # (removed for simplicity)
+alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
@@ -578,7 +578,11 @@ decimalCostNames = [
     'effectivePrimeProb',
     'effectiveIfPrimeProb',
     'effectivePrimeNotProb',
-    'effectiveIfPrimeNotProb'
+    'effectiveIfPrimeNotProb',
+    #'quantoSum',
+    #'primeQuantoSum',
+    'primeStamp',
+    #'lastPrimeDistance'
 ]
 
 decimalVarsNames = []
@@ -923,7 +927,7 @@ def resetEngine():
     setStore('#lastPrime', 0)
 
     setStore('#primeProb', 0)
-    setStore('#notPrimeProb', 1)
+    setStore('#notPrimeProb', 0)
 
     setStore('#predictedNotPrimeProb', 0)
     setStore('#predictedPrimeProb', 1)
@@ -938,6 +942,8 @@ def resetEngine():
     setStore('#effectiveIfPrimeNotProb', 0)
 
     setStore('#quanto', 1)
+
+    setStore('#lastPrimeDistance', 0)
 
     # setStore('$isPrime', False)
 
@@ -967,6 +973,8 @@ def executeCycles(instructions, isPrimeVar=0):
     lastPrime = getStore('#lastPrime')
     primeProb = 0
     notPrimeProb = 1
+    quantoSum = 0
+    primeQuantoSum = 0
 
     while (step <= upTo):
         i = step - 1
@@ -979,8 +987,9 @@ def executeCycles(instructions, isPrimeVar=0):
         predictedPrimeProb = ifPrimePredictPrimeProb
 
         # Calculate if prime prediction probability
+        quantoSum += quanto
         primeStamp = quanto
-        primeStamp *= ifPrimePredictPrimeProb
+        primeStamp *= predictedPrimeProb
         ifPrimePredictPrimeProb -= primeStamp
         ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
@@ -989,9 +998,11 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#ifPrimePredictNotPrimeProb', ifPrimePredictNotPrimeProb)
         setStore('#ifPrimePredictPrimeProb', ifPrimePredictPrimeProb)
         setStore('#effectivePrimeProb', (numPrimes / step))
-        setStore('#effectiveIfPrimeProb', ((numPrimes+1) / step))
+        setStore('#effectiveIfPrimeProb', ((numPrimes+1) / i))
         setStore('#effectivePrimeNotProb', 1-(numPrimes / step))
-        setStore('#effectiveIfPrimeNotProb', 1 - ((numPrimes+1) / step))
+        setStore('#effectiveIfPrimeNotProb', 1 - ((numPrimes+1) / i))
+        #setStore('#quantoSum', quantoSum)
+        setStore('#primeStamp', primeStamp)
 
         ###
         ### Cycle
@@ -1012,6 +1023,8 @@ def executeCycles(instructions, isPrimeVar=0):
             predictedNotPrimeProb = ifPrimePredictNotPrimeProb
             predictedPrimeProb = ifPrimePredictPrimeProb
 
+            primeQuantoSum += quanto
+
         primeProb = numPrimes / (step)
         notPrimeProb = 1 - primeProb
 
@@ -1025,12 +1038,18 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#primeProb', primeProb)
         setStore('#notPrimeProb', notPrimeProb)
         setStore('#step', step)
+        #setStore('#primeQuantoSum', primeQuantoSum)
+        #setStore('#lastPrimeDistance', (1/lastPrime))
 
         # Add score
         i = int(i)
         effectiveNumPrimes = distribution[i - 1]
-        numPrimesDiff = numPrimes - effectiveNumPrimes
+        numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / i
 
+        distributionDiff += numPrimesDiff
+        distributionMaxDiff += 1
+
+        '''
         if numPrimesDiff < 0:
             numPrimesDiff /= effectiveNumPrimes
             numPrimesDiff *= -1
@@ -1041,6 +1060,7 @@ def executeCycles(instructions, isPrimeVar=0):
             distributionDiff += numPrimesDiff
 
         distributionMaxDiff += 1
+        '''
 
     distributionDiff /= distributionMaxDiff
     return (1 - distributionDiff)
@@ -1840,7 +1860,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 1000
+grid_size = 100
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
