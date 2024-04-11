@@ -25,7 +25,9 @@ from main import *
 import torch.optim as optim
 import torch
 
-device = 'cuda'
+device = 'mps'
+
+enableML = False
 
 """## Costum classes"""
 
@@ -169,7 +171,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=100000, epsilon=[1.0, 0.25], epsilon_rate=1.0, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=100000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -298,21 +300,22 @@ class Agent:
                                     "\t avgLines:", avgNumberIsolatedLines)
 
                         print("Working on score ", scoreWeight)
-                        for i in range(0, game.countInstructionsElements(isolatedInstructions)):
-                            view = game.get_state(i + 1, isolatedInstructions)
-                            if checkViewScore(view, scoreWeight):
-                                repeat = int((20 * scoreWeight)+1)
-                                for r in range(0, repeat):
-                                    #modelsGen.trainInput(view, scoreWeight)
-                                    self.optim.zero_grad()
-                                    tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2)
-                                    pred = model(tensor)
-                                    target = torch.tensor([[scoreWeight]], dtype=torch.float32).to(device=device)
-                                    err = self.loss(pred, target)
-                                    err.backward()
-                                    self.optim.step()
-                                    loss += float(err)
-                                    print("Train with loss ", err)
+                        if enableML:
+                            for i in range(0, game.countInstructionsElements(isolatedInstructions)):
+                                view = game.get_state(i + 1, isolatedInstructions)
+                                if checkViewScore(view, scoreWeight):
+                                    repeat = int((20 * scoreWeight)+1)
+                                    for r in range(0, repeat):
+                                        #modelsGen.trainInput(view, scoreWeight)
+                                        self.optim.zero_grad()
+                                        tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2)
+                                        pred = model(tensor)
+                                        target = torch.tensor([[scoreWeight]], dtype=torch.float32).to(device=device)
+                                        err = self.loss(pred, target)
+                                        err.backward()
+                                        self.optim.step()
+                                        loss += float(err)
+                                        print("Train with loss ", err)
 
 
                         # Save working lines max score
@@ -327,24 +330,25 @@ class Agent:
                     game_over = True
 
             # Train the best scores of the total script
-            totElements = 0
-            for i in range(0, len(game.instructions)):
-                instr = game.instructions[i]
-                instrLen = len(instr)
+            if enableML:
+                totElements = 0
+                for i in range(0, len(game.instructions)):
+                    instr = game.instructions[i]
+                    instrLen = len(instr)
 
-                if linesScores[i] > 0:
-                    for u in range(totElements, totElements + instrLen):
-                        view = game.get_state(u + 1)
-                        self.optim.zero_grad()
-                        pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2))
-                        err = self.loss(pred, torch.tensor([[linesScores[i]]], dtype=torch.float32).to(device=device))
-                        err.backward()
-                        self.optim.step()
-                        loss += float(err)
+                    if linesScores[i] > 0:
+                        for u in range(totElements, totElements + instrLen):
+                            view = game.get_state(u + 1)
+                            self.optim.zero_grad()
+                            pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2))
+                            err = self.loss(pred, torch.tensor([[linesScores[i]]], dtype=torch.float32).to(device=device))
+                            err.backward()
+                            self.optim.step()
+                            loss += float(err)
 
-                totElements += instrLen
+                    totElements += instrLen
 
-            gc.collect()
+            #gc.collect()
 
             if checkpoint and ((epoch + 1 - observe) % checkpoint == 0 or epoch >= nb_epoch):
                 model.save(self.dirOutputs)
