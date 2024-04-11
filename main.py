@@ -493,14 +493,14 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
+alternativeStartInstruction = ['IF', 'END'] # (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
 ## Operations
 """
 
-neutralOps = ['ASSIGN'] # ASSIGN removed after 'DEFAULT'
+neutralOps = ['ASSIGN', 'DEFAULT'] # ASSIGN removed after 'DEFAULT'
 labels.extend(neutralOps)
 
 decimalOps = []
