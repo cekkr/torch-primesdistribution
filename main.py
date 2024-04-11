@@ -171,7 +171,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=1000000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=1000,
+    def train(self, game, nb_epoch=100000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=1000,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -493,7 +493,7 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = ['IF', 'END'] # (removed for simplicity)
+alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
@@ -520,7 +520,7 @@ boolOps.append('GET')
 # boolOps.append('LET')
 labels.extend(boolOps)
 
-boolOps_bool = ['NOT', 'OR']
+boolOps_bool = ['NOT', 'OR', 'AND']
 boolOps_decimal = ['GT', 'GET', 'LT', 'LET']
 
 oneArgOps = ['NOT']
@@ -564,7 +564,8 @@ decimalCostNames = [
     'predictedPrimeProb',
     'ifPrimePredictNotPrimeProb',
     'ifPrimePredictPrimeProb',
-    'quanto'
+    'quanto',
+    'effectivePrimeProb'
 ]
 
 decimalVarsNames = []
@@ -858,6 +859,9 @@ def interpretBytecode_line(line):
         case 'OR':
             res = arg1 or arg2
 
+        case 'AND':
+            res = arg1 and arg2
+
         case 'CMP':
             res = arg1 == arg2
 
@@ -905,14 +909,16 @@ def resetEngine():
     setStore('#numPrimes', 0)
     setStore('#lastPrime', 0)
 
-    setStore('#primeProb', 0)
-    setStore('#notPrimeProb', 1)
+    setStore('#primeProb', 1)
+    setStore('#notPrimeProb', 0)
 
     setStore('#predictedNotPrimeProb', 0)
     setStore('#predictedPrimeProb', 1)
 
     setStore('#ifPrimePredictNotPrimeProb', 0)
     setStore('#ifPrimePredictPrimeProb', 0)
+
+    setStore('#effectivePrimeProb', 0)
 
     setStore('#quanto', 1)
 
@@ -959,6 +965,7 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#quanto', quanto)
         setStore('#ifPrimePredictNotPrimeProb', ifPrimePredictNotPrimeProb)
         setStore('#ifPrimePredictPrimeProb', ifPrimePredictPrimeProb)
+        setStore('#effectivePrimeProb', (numPrimes / step))
 
         ###
         ### Cycle
@@ -1807,7 +1814,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 300
+grid_size = 50
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
