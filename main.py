@@ -169,7 +169,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=100000, epsilon=[0.75, 0.0], epsilon_rate=3/4, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=100000, epsilon=[1.0, 0.25], epsilon_rate=1.0, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -322,7 +322,7 @@ class Agent:
 
                     game_over = game.is_over()
 
-                lineVal = (game.focus_y/game.num_lines)**1.5
+                lineVal = (game.focus_y/game.num_lines)**1.25
                 if lineVal > posVal:
                     game_over = True
 
@@ -496,7 +496,7 @@ labels.extend(alternativeStartInstruction)
 ## Operations
 """
 
-neutralOps = ['DEFAULT', 'ASSIGN'] # ASSIGN removed after
+neutralOps = ['ASSIGN'] # ASSIGN removed after 'DEFAULT'
 labels.extend(neutralOps)
 
 decimalOps = []
