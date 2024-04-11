@@ -250,6 +250,7 @@ class Agent:
 
             cycles = 0
             game_over = False
+            a = 0
             while not game_over:
 
                 options = game.optionsLen
@@ -258,8 +259,8 @@ class Agent:
                         retry = True
                         while retry:
                             a = int(np.random.randint(options))
-                            if a == 0:
-                                retry = np.random.randint(2) == 0
+                            if a == game.options.index('IF'):
+                                retry = int(np.random.randint(4)) > 0
                             else:
                                 retry = False
                     else:
