@@ -254,7 +254,14 @@ class Agent:
 
                 options = game.optionsLen
                 if np.random.random() < epsilon or epoch < observe:
-                    a = int(np.random.randint(options))
+                    if 'IF' in game.options:
+                        retry = True
+                        while retry:
+                            a = int(np.random.randint(options))
+                            if a == 0:
+                                retry = np.random.randint(2) == 0
+                    else:
+                        a = int(np.random.randint(options))
                 else:
                     p = self.predictOptions(game)
                     a = 0
