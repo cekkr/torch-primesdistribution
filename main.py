@@ -260,6 +260,8 @@ class Agent:
                             a = int(np.random.randint(options))
                             if a == 0:
                                 retry = np.random.randint(2) == 0
+                            else:
+                                retry = False
                     else:
                         a = int(np.random.randint(options))
                 else:
