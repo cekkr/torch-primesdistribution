@@ -565,7 +565,8 @@ decimalCostNames = [
     'ifPrimePredictNotPrimeProb',
     'ifPrimePredictPrimeProb',
     'quanto',
-    'effectivePrimeProb'
+    'effectivePrimeProb',
+    'effectiveIfPrimeProb'
 ]
 
 decimalVarsNames = []
@@ -916,9 +917,10 @@ def resetEngine():
     setStore('#predictedPrimeProb', 1)
 
     setStore('#ifPrimePredictNotPrimeProb', 0)
-    setStore('#ifPrimePredictPrimeProb', 0)
+    setStore('#ifPrimePredictPrimeProb', 1)
 
     setStore('#effectivePrimeProb', 0)
+    setStore('#effectiveIfPrimeProb', 0)
 
     setStore('#quanto', 1)
 
@@ -941,10 +943,10 @@ def executeCycles(instructions, isPrimeVar=0):
     step = getStore('#step')
     i = getStore('#i')
     quanto = None
-    ifPrimePredictNotPrimeProb = None
-    ifPrimePredictPrimeProb = None
+    ifPrimePredictNotPrimeProb = 0
+    ifPrimePredictPrimeProb = 0
     predictedPrimeProb = getStore('#predictedPrimeProb')
-    predictedNotPrimeProb = getStore('#predictedNotPrimeProb')
+    predictedNotPrimeProb = getStore('#predictedPrimeProb')
     isPrime = None
     numPrimes = getStore('#numPrimes')
     lastPrime = getStore('#lastPrime')
@@ -954,18 +956,20 @@ def executeCycles(instructions, isPrimeVar=0):
         quanto = 1 / step
 
         ifPrimePredictNotPrimeProb = getStore('#predictedNotPrimeProb')
+        ifPrimePredictPrimeProb = getStore('#predictedPrimeProb')
 
         # Calculate if prime prediction probability
         primeStamp = quanto
-        primeStamp *= predictedPrimeProb
-        ifPrimePredictNotPrimeProb += primeStamp
-        ifPrimePredictPrimeProb = 1 - ifPrimePredictNotPrimeProb
+        #primeStamp *= predictedPrimeProb
+        ifPrimePredictPrimeProb -= primeStamp
+        ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
         setStore('#i', i)
         setStore('#quanto', quanto)
         setStore('#ifPrimePredictNotPrimeProb', ifPrimePredictNotPrimeProb)
         setStore('#ifPrimePredictPrimeProb', ifPrimePredictPrimeProb)
         setStore('#effectivePrimeProb', (numPrimes / step))
+        setStore('#effectiveIfPrimeProb', ((numPrimes+1) / step))
 
         ###
         ### Cycle
@@ -986,7 +990,7 @@ def executeCycles(instructions, isPrimeVar=0):
             predictedNotPrimeProb = ifPrimePredictNotPrimeProb
             predictedPrimeProb = ifPrimePredictPrimeProb
 
-        primeProb = numPrimes / i
+        primeProb = numPrimes / step
         notPrimeProb = 1 - primeProb
 
         lastPrime += 1
