@@ -493,7 +493,7 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
+alternativeStartInstruction = ['IF', 'END'] # (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
@@ -566,7 +566,9 @@ decimalCostNames = [
     'ifPrimePredictPrimeProb',
     'quanto',
     'effectivePrimeProb',
-    'effectiveIfPrimeProb'
+    'effectiveIfPrimeProb',
+    'effectivePrimeNotProb',
+    'effectiveIfPrimeNotProb'
 ]
 
 decimalVarsNames = []
@@ -910,8 +912,8 @@ def resetEngine():
     setStore('#numPrimes', 0)
     setStore('#lastPrime', 0)
 
-    setStore('#primeProb', 1)
-    setStore('#notPrimeProb', 0)
+    setStore('#primeProb', 0)
+    setStore('#notPrimeProb', 1)
 
     setStore('#predictedNotPrimeProb', 0)
     setStore('#predictedPrimeProb', 1)
@@ -921,6 +923,9 @@ def resetEngine():
 
     setStore('#effectivePrimeProb', 0)
     setStore('#effectiveIfPrimeProb', 0)
+
+    setStore('#effectivePrimeNotProb', 1)
+    setStore('#effectiveIfPrimeNotProb', 0)
 
     setStore('#quanto', 1)
 
@@ -950,17 +955,22 @@ def executeCycles(instructions, isPrimeVar=0):
     isPrime = None
     numPrimes = getStore('#numPrimes')
     lastPrime = getStore('#lastPrime')
+    primeProb = 0
+    notPrimeProb = 1
 
     while (step <= upTo):
         i = step - 1
         quanto = 1 / step
 
         ifPrimePredictNotPrimeProb = getStore('#predictedNotPrimeProb')
+        predictedNotPrimeProb = ifPrimePredictNotPrimeProb
+
         ifPrimePredictPrimeProb = getStore('#predictedPrimeProb')
+        predictedPrimeProb = ifPrimePredictPrimeProb
 
         # Calculate if prime prediction probability
         primeStamp = quanto
-        #primeStamp *= predictedPrimeProb
+        primeStamp *= ifPrimePredictPrimeProb
         ifPrimePredictPrimeProb -= primeStamp
         ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
@@ -970,6 +980,8 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#ifPrimePredictPrimeProb', ifPrimePredictPrimeProb)
         setStore('#effectivePrimeProb', (numPrimes / step))
         setStore('#effectiveIfPrimeProb', ((numPrimes+1) / step))
+        setStore('#effectivePrimeNotProb', 1-(numPrimes / step))
+        setStore('#effectiveIfPrimeNotProb', 1 - ((numPrimes+1) / step))
 
         ###
         ### Cycle
@@ -990,7 +1002,7 @@ def executeCycles(instructions, isPrimeVar=0):
             predictedNotPrimeProb = ifPrimePredictNotPrimeProb
             predictedPrimeProb = ifPrimePredictPrimeProb
 
-        primeProb = numPrimes / step
+        primeProb = numPrimes / (step)
         notPrimeProb = 1 - primeProb
 
         lastPrime += 1
@@ -1751,7 +1763,7 @@ class Calculon(Game):
         if self.current_score == 1:
             self.checkGameEnd()
 
-        pow = self.current_score ** 5
+        pow = self.current_score **1
         return pow
 
     def reset(self):
@@ -1818,7 +1830,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 50
+grid_size = 1000
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
