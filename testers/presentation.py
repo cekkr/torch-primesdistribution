@@ -3,8 +3,6 @@ primes = []
 
 predictedPrimeProb = 1
 predictedNotPrimeProb = 0
-ifPrimePredictPrimeProb = 1
-ifPrimePredictNotPrimeProb = 0
 numPrimes = 0
 
 for step in range(2, upTo):
