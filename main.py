@@ -503,7 +503,7 @@ storeTypes.append('d$')
 storeTypes.append('b$')
 labels.extend(storeTypes)
 
-alternativeStartInstruction = [] # 'IF', 'END' (removed for simplicity)
+alternativeStartInstruction = ['IF', 'END'] #  (removed for simplicity)
 labels.extend(alternativeStartInstruction)
 
 """
@@ -518,6 +518,7 @@ decimalOps.append('ADD')
 decimalOps.append('SUB')
 decimalOps.append('MUL')
 decimalOps.append('DIV')
+decimalOps.append('MOD')
 labels.extend(decimalOps)
 
 boolOps = []
@@ -868,6 +869,13 @@ def interpretBytecode_line(line):
                 # todo: Handle this condition blocking the game
             else:
                 res = arg1 / arg2
+
+        case 'MOD':
+            if arg2 == 0:
+                res = 0  # wrong but temporary response
+                # todo: Handle this condition blocking the game
+            else:
+                res = arg1 % arg2
 
         # Bool
         case 'NOT':
@@ -1860,7 +1868,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 100
+grid_size = 200
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
