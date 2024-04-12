@@ -1,6 +1,23 @@
 
 upTo = 1000
 
+prime_numbers = []
+count = 0
+num = 2
+
+def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+while num <= upTo:
+    if is_prime(num):
+        prime_numbers.append(num)
+    num += 1
+
 primes = []
 
 primeProb = 0
@@ -14,6 +31,8 @@ for step in range(2, upTo):
     i = step - 1
     quanto = 1 / step
 
+    effectivePrimeProb = numPrimes / step
+
     primeStamp = quanto
     primeStamp *= predictedPrimeProb
 
@@ -21,10 +40,12 @@ for step in range(2, upTo):
     ifPrimePredictPrimeProb -= primeStamp
     ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
+    '''
     d0 = primeProb + ifPrimePredictNotPrimeProb
     d1 = d0 / ifPrimePredictNotPrimeProb
     d2 = d1 / d0
     isPrime = d2 >= d0
+    '''
 
     '''
     d0 = primeProb - ifPrimePredictPrimeProb
@@ -38,6 +59,9 @@ for step in range(2, upTo):
     isPrime = predictedPrimeProb > d0
     '''
 
+    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+    isPrime = ifPrimePredictPrimeProb > d0
+
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb
         predictedNotPrimeProb = ifPrimePredictNotPrimeProb
@@ -48,3 +72,5 @@ for step in range(2, upTo):
         print(step, " is not prime")
 
     primeProb = numPrimes / (step)
+
+print("end")

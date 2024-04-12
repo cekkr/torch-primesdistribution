@@ -576,7 +576,7 @@ decimalCostNames = [
     'ifPrimePredictNotPrimeProb', #10
     'ifPrimePredictPrimeProb', #11
     'quanto',
-    'effectivePrimeProb',
+    'effectivePrimeProb', # 13
     'effectiveIfPrimeProb',
     'effectivePrimeNotProb',
     'effectiveIfPrimeNotProb',
