@@ -568,12 +568,12 @@ decimalCostNames = [
     'i',
     'numPrimes',
     'lastPrime',
-    'primeProb',
+    'primeProb', #6
     'notPrimeProb',
-    'predictedNotPrimeProb',
+    'predictedNotPrimeProb', #8
     'predictedPrimeProb',
-    'ifPrimePredictNotPrimeProb',
-    'ifPrimePredictPrimeProb',
+    'ifPrimePredictNotPrimeProb', #10
+    'ifPrimePredictPrimeProb', #11
     'quanto',
     'effectivePrimeProb',
     'effectiveIfPrimeProb',
@@ -1544,7 +1544,7 @@ class Calculon(Game):
             self.resetCurLine(True)
             self.loadOptions()
 
-        random.shuffle(self.options)
+        #random.shuffle(self.options)
 
     def newStack(self):
         self.assignStoresStack.append(self.assignUsedStores)
