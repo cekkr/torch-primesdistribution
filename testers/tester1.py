@@ -1,5 +1,5 @@
 
-upTo = 10000
+upTo = 100000
 
 prime_numbers = []
 count = 0
