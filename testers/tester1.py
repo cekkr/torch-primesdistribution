@@ -51,21 +51,21 @@ for step in range(2, upTo):
     isPrime = False
     chosen = 0
 
-    if True:
+    if False:
         d0 = primeProb + ifPrimePredictNotPrimeProb
         d1 = d0 / ifPrimePredictNotPrimeProb
         d2 = d1 / d0
         isPrime = d2 >= d0
 
 
-    if reallyPrime is not isPrime:
+    if reallyPrime is not isPrime and False:
         d0 = primeProb - ifPrimePredictPrimeProb
         d2 = predictedNotPrimeProb + d0
         d3 = d2 + d0
         isPrime = primeProb > d3
         chosen = 1
 
-    if reallyPrime is not isPrime:
+    if reallyPrime is not isPrime or True:
         d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
         isPrime = predictedPrimeProb > d0
         chosen = 2

@@ -555,7 +555,9 @@ def assocNames(names, storeType):
 
 boolCostNames = [
     'false',
-    'true'
+    'true',
+    'isPrime0',
+    'isPrime1'
 ]
 
 boolVarsNames = [
@@ -988,6 +990,9 @@ def executeCycles(instructions, isPrimeVar=0):
         i = step - 1
         quanto = 1 / step
 
+        effectivePrimeProb = numPrimes / (step)
+        effectiveIfPrimeProb = (numPrimes + 1) / (step)
+
         ifPrimePredictNotPrimeProb = getStore('#predictedNotPrimeProb')
         predictedNotPrimeProb = ifPrimePredictNotPrimeProb
 
@@ -1001,6 +1006,13 @@ def executeCycles(instructions, isPrimeVar=0):
         ifPrimePredictPrimeProb -= primeStamp
         ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
+        d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
+        isPrime0 = predictedPrimeProb > d0
+
+        d0 = predictedPrimeProb / (1 - effectivePrimeProb)
+        d1 = predictedNotPrimeProb - d0
+        isPrime1 = (1 - effectiveIfPrimeProb) >= d1
+
         setStore('#i', i)
         setStore('#quanto', quanto)
         setStore('#ifPrimePredictNotPrimeProb', ifPrimePredictNotPrimeProb)
@@ -1011,6 +1023,9 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#effectiveIfPrimeNotProb', 1 - ((numPrimes+1) / i))
         #setStore('#quantoSum', quantoSum)
         setStore('#primeStamp', primeStamp)
+
+        setStore('#isPrime0', isPrime0)
+        setStore('#isPrime1', isPrime1)
 
         ###
         ### Cycle
