@@ -171,7 +171,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=1000000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=1000,
+    def train(self, game, nb_epoch=1000000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=10000,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -260,7 +260,7 @@ class Agent:
                         while retry:
                             a = int(np.random.randint(options))
                             if a == game.options.index('IF'):
-                                retry = int(np.random.randint(5)) > 0
+                                retry = int(np.random.randint(3)) > 0
                             else:
                                 retry = False
                     else:
@@ -524,6 +524,7 @@ labels.extend(decimalOps)
 boolOps = []
 boolOps.append('NOT')
 boolOps.append('OR')
+boolOps.append('AND')
 boolOps.append('CMP')
 boolOps.append('GT')
 boolOps.append('GET')
@@ -1009,9 +1010,8 @@ def executeCycles(instructions, isPrimeVar=0):
         d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
         isPrime0 = predictedPrimeProb > d0
 
-        d0 = predictedPrimeProb / (1 - effectivePrimeProb)
-        d1 = predictedNotPrimeProb - d0
-        isPrime1 = (1 - effectiveIfPrimeProb) >= d1
+        d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+        isPrime1 = ifPrimePredictPrimeProb >= d0
 
         setStore('#i', i)
         setStore('#quanto', quanto)
@@ -1066,11 +1066,18 @@ def executeCycles(instructions, isPrimeVar=0):
 
         # Add score
         i = int(i)
-        effectiveNumPrimes = distribution[i - 1]
-        numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / i
 
-        distributionDiff += numPrimesDiff
-        distributionMaxDiff += 1
+        if False:
+            effectiveNumPrimes = distribution[i - 1]
+            numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / i
+
+            distributionDiff += numPrimesDiff
+            distributionMaxDiff += 1
+
+        if True:
+            if isPrime != numIsPrime[i-1]:
+                distributionDiff += 1
+            distributionMaxDiff += 1
 
         '''
         if numPrimesDiff < 0:
@@ -1883,7 +1890,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 500
+grid_size = 1000
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 

@@ -51,6 +51,7 @@ for step in range(2, upTo):
     isPrime = False
     chosen = 0
 
+    '''
     if False:
         d0 = primeProb + ifPrimePredictNotPrimeProb
         d1 = d0 / ifPrimePredictNotPrimeProb
@@ -97,8 +98,25 @@ for step in range(2, upTo):
         d1 = predictedNotPrimeProb - d0
         isPrime = (1-effectiveIfPrimeProb) >= d1
         chosen = 6
+    '''
+
+    d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
+    isPrime = predictedPrimeProb > d0
+
+    d0 = (1 - primeProb) + predictedPrimeProb
+    b0 = ifPrimePredictNotPrimeProb >= d0
+    isPrime1 = not b0
+
+    d0 = predictedPrimeProb / (1 - effectivePrimeProb)
+    d1 = predictedNotPrimeProb - d0
+    isPrime2 = (1 - effectiveIfPrimeProb) >= d1
+
+    if chosen == 6:
+        print("check")
 
     chosens.append(chosen)
+
+    isPrime = reallyPrime
 
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb
