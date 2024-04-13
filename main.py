@@ -618,7 +618,7 @@ def setStore(name, value):
     isCost = name.startswith('#')
     name = name[1:]
 
-    isBool = isinstance(value, bool)
+    isBool = isinstance(value, (np.bool_, bool))
 
     storeTypeSaved = getNameType(name)
 
