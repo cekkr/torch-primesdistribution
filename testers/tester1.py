@@ -33,6 +33,8 @@ ifPrimePredictNotPrimeProb = 0
 numPrimes = 0
 lastPrime = 1
 
+d1 = False
+
 for step in range(2, upTo):
     i = step - 1
     quanto = 1 / step
@@ -113,8 +115,42 @@ for step in range(2, upTo):
     isPrime2 = (1 - effectiveIfPrimeProb) >= d1
     '''
 
-    d1 = lastPrime / i
-    isPrime = d1 >= (1-primeProb)
+    #d1 = lastPrime / i
+    #isPrime = d1 >= (1-primeProb)
+
+    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+    isPrime0 = ifPrimePredictPrimeProb >= d0
+
+    d0 = (1 - primeProb) + predictedPrimeProb
+    b0 = ifPrimePredictNotPrimeProb >= d0
+    isPrime1 = not b0
+
+    d0 = predictedPrimeProb / (1 - effectivePrimeProb)
+    d1 = predictedNotPrimeProb - d0
+    isPrime2 = (1 - effectiveIfPrimeProb) >= d1
+
+    d0 = lastPrime % (1-effectiveIfPrimeProb)
+    isPrime3 = d0 > predictedNotPrimeProb
+
+    d0 = ifPrimePredictPrimeProb * lastPrime
+    d5 = d0 - 1
+    isPrime4 = d5 > primeProb
+
+    if isPrime1 is reallyPrime:
+        chosen = 1
+        isPrime = reallyPrime
+
+    if isPrime2 is reallyPrime:
+        chosen = 2
+        isPrime = reallyPrime
+
+    if isPrime3 is reallyPrime:
+        chosen = 3
+        isPrime = reallyPrime
+
+    if isPrime4 is reallyPrime:
+        chosen = 4
+        isPrime = reallyPrime
 
     if chosen == 6:
         print("check")

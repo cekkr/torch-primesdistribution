@@ -1069,7 +1069,7 @@ def executeCycles(instructions, isPrimeVar=0):
 
         if True:
             effectiveNumPrimes = distribution[i - 1]
-            numPrimesDiff = numPrimes - effectiveNumPrimes / i
+            numPrimesDiff = (numPrimes - effectiveNumPrimes) / step
 
             distributionDiff += numPrimesDiff
             distributionMaxDiff += 1
@@ -1815,7 +1815,7 @@ class Calculon(Game):
 
         myPrint("Score: ", self.current_score)
 
-        if self.current_score == 1:
+        if self.current_score == 0:
             self.checkGameEnd()
 
         pow = self.current_score **1
@@ -1885,7 +1885,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 1000
+grid_size = 100
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
