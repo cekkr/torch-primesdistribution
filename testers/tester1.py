@@ -100,6 +100,7 @@ for step in range(2, upTo):
         chosen = 6
     '''
 
+    '''
     d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
     isPrime = predictedPrimeProb > d0
 
@@ -110,13 +111,17 @@ for step in range(2, upTo):
     d0 = predictedPrimeProb / (1 - effectivePrimeProb)
     d1 = predictedNotPrimeProb - d0
     isPrime2 = (1 - effectiveIfPrimeProb) >= d1
+    '''
+
+    d1 = lastPrime / i
+    isPrime = d1 >= (1-primeProb)
 
     if chosen == 6:
         print("check")
 
     chosens.append(chosen)
 
-    isPrime = reallyPrime
+    #isPrime = reallyPrime
 
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb

@@ -192,7 +192,7 @@ class Agent:
 
         avgTotalIsolatedLines = game.num_lines / 2
 
-        bestScore = 0.90
+        bestScore = 1.0
         bestScoreLines = 0
 
         lastTrain = self.readJson(self.fileTraining)
@@ -282,8 +282,8 @@ class Agent:
                         # Train only the working algorithm
                         isolatedInstructions = game.curWinnerInstructions
 
-                        if score > bestScore or (score == bestScore and bestScoreLines > len(isolatedInstructions)):
-                            bestScore = score
+                        if abs(score) < bestScore or (score == bestScore and bestScoreLines > len(isolatedInstructions)):
+                            bestScore = abs(score)*2
                             bestScoreLines = len(isolatedInstructions)
 
                             with open(self.dirOutputs + '/' + str(score) + '.txt', 'w') as file:
@@ -571,7 +571,7 @@ decimalCostNames = [
     'step',
     'i',
     'numPrimes',
-    'lastPrime',
+    'lastPrime',#5
     'primeProb', #6
     'notPrimeProb',
     'predictedNotPrimeProb', #8
@@ -1067,16 +1067,11 @@ def executeCycles(instructions, isPrimeVar=0):
         # Add score
         i = int(i)
 
-        if False:
+        if True:
             effectiveNumPrimes = distribution[i - 1]
-            numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / i
+            numPrimesDiff = numPrimes - effectiveNumPrimes / i
 
             distributionDiff += numPrimesDiff
-            distributionMaxDiff += 1
-
-        if True:
-            if isPrime != numIsPrime[i-1]:
-                distributionDiff += 1
             distributionMaxDiff += 1
 
         '''
@@ -1093,7 +1088,7 @@ def executeCycles(instructions, isPrimeVar=0):
         '''
 
     distributionDiff /= distributionMaxDiff
-    return (1 - distributionDiff)
+    return distributionDiff
 
 
 """# The 'game'
