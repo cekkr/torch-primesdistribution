@@ -1,5 +1,5 @@
 
-upTo = 200
+upTo = 1000
 
 prime_numbers = []
 numIsPrime = []
@@ -24,6 +24,7 @@ while num <= upTo:
 
 primes0 = []
 chosens = []
+serieses = []
 
 primeProb = 0
 predictedPrimeProb = 1
@@ -136,33 +137,92 @@ for step in range(2, upTo):
     d5 = d0 - 1
     isPrime4 = d5 > primeProb
 
+    d0 = 0
+    if effectivePrimeProb != 0:
+        d0 = (1 - effectivePrimeProb) % effectivePrimeProb
+    isPrime5 = 0 >= d0
+
+    d0 = 0
+    if effectivePrimeProb > 0:
+        d0 = step % effectivePrimeProb
+    d1 = 0
+    if d0 > 0:
+        d1 = i / d0
+    isPrime6 = ifPrimePredictNotPrimeProb >= d1
+
+    d0 = effectivePrimeProb * primeProb
+    isPrime7 = ifPrimePredictPrimeProb > d0
+
+    series = []
     if isPrime1 is reallyPrime:
         chosen = 1
         isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
 
     if isPrime2 is reallyPrime:
         chosen = 2
         isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
 
     if isPrime3 is reallyPrime:
         chosen = 3
         isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
 
     if isPrime4 is reallyPrime:
         chosen = 4
         isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
 
-    [["d$", 0, "MOD", "d#", 5, "d#", 12], ["b$", 0, "NOT", "b#", 0], ["b$", 1, "OR", "b#", 1, "b$", 0],
-     ["d$", 1, "ADD", "d$", 0, "d#", 1], ["d$", 2, "ADD", "d$", 0, "d#", 16], ["b$", 2, "CMP", "d#", 16, "d$", 2],
-     ["IF", "b$", 0], ["b$", 1, "GET", "d#", 5, "d#", 3], ["b$", 1, "NOT", "b#", 1], ["b$", 0, "OR", "b#", 0, "b$", 1],
-     ["d$", 2, "DIV", "d#", 2, "d$", 0], ["b$", 1, "GT", "d$", 1, "d$", 2], ["END"]]
+    if isPrime5 is reallyPrime:
+        chosen = 5
+        isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
+
+    if isPrime6 is reallyPrime:
+        chosen = 6
+        isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
+
+    if isPrime7 is reallyPrime:
+        chosen = 7
+        isPrime = reallyPrime
+        series.append(True)
+    else:
+        series.append(False)
+
+    serieses.append(series)
+
+    '''
+    d0 = ifPrimePredictPrimeProb * lastPrime
+    d1 = d0 - (1 - effectivePrimeProb)
+    d2 = predictedNotPrimeProb - d0
+    d3 = d2 * d1
+    isPrime = d3 > d2
+    '''
+
+    #[["d$", 0, "MUL", "d#", 13, "d#", 6], ["b$", 0, "GT", "d#", 11, "d$", 0]]
+    #d0 = effectivePrimeProb * primeProb
+    #isPrime = ifPrimePredictPrimeProb > d0
 
     if chosen == 6:
         print("check")
 
     chosens.append(chosen)
 
-    #isPrime = reallyPrime
+    isPrime = isPrime1
 
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb

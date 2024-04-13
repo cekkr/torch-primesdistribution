@@ -71,7 +71,7 @@ def is_prime(num):
     return True
 
 
-upTo = 1000  # 50.000
+upTo = 300  # 50.000
 
 numIsPrime = []
 
@@ -283,8 +283,9 @@ class Agent:
                         isolatedInstructions = game.curWinnerInstructions
 
                         if abs(score) < bestScore or (score == bestScore and bestScoreLines > len(isolatedInstructions)):
-                            bestScore = abs(score)*2
-                            bestScoreLines = len(isolatedInstructions)
+                            if abs(score) < bestScore/2:
+                                bestScore = abs(score)
+                                bestScoreLines = len(isolatedInstructions)
 
                             with open(self.dirOutputs + '/' + str(score) + '.txt', 'w') as file:
                                 file.write(json.dumps(isolatedInstructions))
@@ -1070,6 +1071,7 @@ def executeCycles(instructions, isPrimeVar=0):
         if True:
             effectiveNumPrimes = distribution[i - 1]
             numPrimesDiff = (numPrimes - effectiveNumPrimes) / step
+            numPrimesDiff = numPrimesDiff ** (1/3)
 
             distributionDiff += numPrimesDiff
             distributionMaxDiff += 1
@@ -1102,7 +1104,7 @@ ideWidth = 7
 drawLineNumber = False
 dontAllowEndOnDepth0 = True
 forceAssignToNewVar = True
-allowAssign = False
+allowAssign = True
 
 if not allowAssign:
     neutralOps.remove('ASSIGN')
@@ -1880,6 +1882,11 @@ class Calculon(Game):
 """# Execute"""
 
 ### Execution
+
+res = executeCycles([["d$", 0, "MOD", "d#", 5, "d#", 12], ["b$", 0, "NOT", "b#", 0], ["b$", 1, "OR", "b#", 1, "b$", 0],
+     ["d$", 1, "ADD", "d$", 0, "d#", 1], ["d$", 2, "ADD", "d$", 0, "d#", 16], ["b$", 2, "CMP", "d#", 16, "d$", 2],
+     ["IF", "b$", 0], ["b$", 1, "GET", "d#", 5, "d#", 3], ["b$", 1, "NOT", "b#", 1], ["b$", 0, "OR", "b#", 0, "b$", 1],
+     ["d$", 2, "DIV", "d#", 2, "d$", 0], ["b$", 1, "GT", "d$", 1, "d$", 2], ["END"]],2)
 
 drawFocus = False
 els = 3 if drawFocus else 2
