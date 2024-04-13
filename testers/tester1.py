@@ -1,7 +1,8 @@
 
-upTo = 100000
+upTo = 200
 
 prime_numbers = []
+numIsPrime = []
 count = 0
 num = 2
 
@@ -16,9 +17,13 @@ def is_prime(num):
 while num <= upTo:
     if is_prime(num):
         prime_numbers.append(num)
+        numIsPrime.append(True)
+    else:
+        numIsPrime.append(False)
     num += 1
 
 primes0 = []
+chosens = []
 
 primeProb = 0
 predictedPrimeProb = 1
@@ -33,6 +38,7 @@ for step in range(2, upTo):
     quanto = 1 / step
 
     effectivePrimeProb = numPrimes / (step)
+    effectiveIfPrimeProb = (numPrimes+1) / (step)
 
     primeStamp = quanto
     primeStamp *= predictedPrimeProb
@@ -41,33 +47,58 @@ for step in range(2, upTo):
     ifPrimePredictPrimeProb -= primeStamp
     ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
-    '''
-    d0 = primeProb + ifPrimePredictNotPrimeProb
-    d1 = d0 / ifPrimePredictNotPrimeProb
-    d2 = d1 / d0
-    isPrime = d2 >= d0
-    '''
+    reallyPrime = numIsPrime[i-1]
+    isPrime = False
+    chosen = 0
 
-    '''
-    d0 = primeProb - ifPrimePredictPrimeProb
-    d2 = predictedNotPrimeProb + d0
-    d3 = d2 + d0
-    isPrime = primeProb > d3
-    '''
+    if True:
+        d0 = primeProb + ifPrimePredictNotPrimeProb
+        d1 = d0 / ifPrimePredictNotPrimeProb
+        d2 = d1 / d0
+        isPrime = d2 >= d0
 
-    '''
-    d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
-    isPrime = predictedPrimeProb > d0
-    '''
 
-    '''
-    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
-    isPrime = ifPrimePredictPrimeProb >= d0
-    '''
+    if reallyPrime is not isPrime:
+        d0 = primeProb - ifPrimePredictPrimeProb
+        d2 = predictedNotPrimeProb + d0
+        d3 = d2 + d0
+        isPrime = primeProb > d3
+        chosen = 1
 
-    d00 = effectivePrimeProb - ifPrimePredictPrimeProb
-    d0 = predictedNotPrimeProb - (1 - primeProb)
-    isPrime = ifPrimePredictPrimeProb >= d00 # (d0 if (lastPrime+i) % 2 == 1 else d00)
+    if reallyPrime is not isPrime:
+        d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
+        isPrime = predictedPrimeProb > d0
+        chosen = 2
+
+    if reallyPrime is not isPrime:
+        d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+        isPrime = ifPrimePredictPrimeProb >= d0
+        chosen = 2
+
+    if reallyPrime is not isPrime:
+        d00 = effectivePrimeProb - ifPrimePredictPrimeProb
+        d0 = predictedNotPrimeProb - (1 - primeProb)
+        isPrime = ifPrimePredictPrimeProb >= d00 # (d0 if (lastPrime+i) % 2 == 1 else d00)
+        chosen = 3
+
+    if reallyPrime is not isPrime:
+        d0 = (1-primeProb) + predictedPrimeProb
+        b0 = ifPrimePredictNotPrimeProb >= d0
+        isPrime = not b0
+        chosen = 4
+
+    if reallyPrime is not isPrime:
+        d0 = primeProb - ifPrimePredictPrimeProb
+        isPrime = predictedPrimeProb >= d0
+        chosen = 5
+
+    if reallyPrime is not isPrime:
+        d0 = predictedPrimeProb / (1-effectivePrimeProb)
+        d1 = predictedNotPrimeProb - d0
+        isPrime = (1-effectiveIfPrimeProb) >= d1
+        chosen = 6
+
+    chosens.append(chosen)
 
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb
