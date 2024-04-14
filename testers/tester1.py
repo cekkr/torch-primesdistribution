@@ -246,8 +246,7 @@ for step in range(2, upTo):
 
     #isPrime = (1-effectiveIfPrimeProb) >= ifPrimePredictNotPrimeProb
 
-    d0 = effectivePrimeProb * primeProb
-    isPrime = ifPrimePredictPrimeProb > d0
+    isPrime = (1-effectiveIfPrimeProb) >= ifPrimePredictNotPrimeProb
 
     if chosen == 6:
         print("check")

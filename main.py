@@ -990,6 +990,8 @@ def executeCycles(instructions, isPrimeVar=0):
     quantoSum = 0
     primeQuantoSum = 0
 
+    jumpBy = 0
+
     while (step <= upTo):
         i = step - 1
         quanto = 1 / step
@@ -1036,13 +1038,18 @@ def executeCycles(instructions, isPrimeVar=0):
         ### Cycle
         ###
 
-        interpretBytecode(bytecode)
+        isPrime = False
+        if jumpBy == 0:
+            interpretBytecode(bytecode)
 
-        ###
-        ### End cycle
-        ###
+            ###
+            ### End cycle
+            ###
 
-        isPrime = getStoreFields(['b$', isPrimeVar])
+
+            isPrime = getStoreFields(['b$', isPrimeVar])
+        else:
+            jumpBy -= 1
 
         if isPrime:
             numPrimes += 1
@@ -1057,7 +1064,18 @@ def executeCycles(instructions, isPrimeVar=0):
         notPrimeProb = 1 - primeProb
 
         lastPrime += 1
-        step += 1 + int(getStore('$jumpBy'))
+
+        if jumpBy == 0:
+            jumpBy = getStore('$jumpBy')
+            try:
+                jumpBy = int(jumpBy)
+            except:
+                jumpBy = 0
+
+            if jumpBy < 0:
+                jumpBy = 0
+
+        step += 1
 
         setStore('#numPrimes', numPrimes)
         setStore('#lastPrime', lastPrime)
