@@ -957,9 +957,11 @@ def resetEngine():
 
     setStore('#quanto', 1)
 
-    setStore('#lastPrimeDistance', 0)
+    setStore('#isPrime0', False)
+    setStore('#isPrime1', False)
 
-    # setStore('$isPrime', False)
+    setStore('#primeStamp', 0)
+    setStore('$jumpBy', 0)
 
 
 resetEngine()  # reset by default
