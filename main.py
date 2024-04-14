@@ -131,7 +131,7 @@ class Agent:
 
         self.loss = torch.nn.MSELoss()
 
-        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.01, weight_decay=1e-5)
+        self.optim = optim.SGD([x for x in model.parameters() if x.requires_grad], lr=0.1, weight_decay=1e-3)
 
         for name, param in model.named_parameters():
             if param.requires_grad:
@@ -1841,7 +1841,7 @@ class Calculon(Game):
                 self.current_score = executeCycles(self.curWinnerInstructions, self.curWinnerInstructions_winner)
             except:
                 self.reset()
-                self.current_score = 10
+                self.current_score = 1
                 print("STUPID FAULT")
 
             self.lastCalculatedBoolVar = self.lastBoolVarAssign
