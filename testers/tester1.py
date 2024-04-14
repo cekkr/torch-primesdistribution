@@ -1,5 +1,5 @@
 
-upTo = 1000
+upTo = 200
 
 prime_numbers = []
 numIsPrime = []
@@ -243,6 +243,11 @@ for step in range(2, upTo):
         d0 = (1-effectivePrimeProb) / predictedNotPrimeProb
         d1 = d0 / predictedNotPrimeProb
     isPrime = d1 > predictedNotPrimeProb
+
+    #isPrime = (1-effectiveIfPrimeProb) >= ifPrimePredictNotPrimeProb
+
+    d0 = effectivePrimeProb * primeProb
+    isPrime = ifPrimePredictPrimeProb > d0
 
     if chosen == 6:
         print("check")

@@ -71,7 +71,7 @@ def is_prime(num):
     return True
 
 
-upTo = 300  # 50.000
+upTo = 1000  # 50.000
 
 numIsPrime = []
 
@@ -590,7 +590,9 @@ decimalCostNames = [
     #'lastPrimeDistance'
 ]
 
-decimalVarsNames = []
+decimalVarsNames = [
+    'jumpBy'
+]
 
 engineFault = False
 
@@ -1028,6 +1030,8 @@ def executeCycles(instructions, isPrimeVar=0):
         setStore('#isPrime0', isPrime0)
         setStore('#isPrime1', isPrime1)
 
+        setStore('$jumpBy', 0)
+
         ###
         ### Cycle
         ###
@@ -1053,7 +1057,7 @@ def executeCycles(instructions, isPrimeVar=0):
         notPrimeProb = 1 - primeProb
 
         lastPrime += 1
-        step += 1
+        step += 1 + int(getStore('$jumpBy'))
 
         setStore('#numPrimes', numPrimes)
         setStore('#lastPrime', lastPrime)
@@ -1070,8 +1074,8 @@ def executeCycles(instructions, isPrimeVar=0):
 
         if True:
             effectiveNumPrimes = distribution[i - 1]
-            numPrimesDiff = (numPrimes - effectiveNumPrimes) / step
-            numPrimesDiff = numPrimesDiff ** (1/3)
+            numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / step
+            numPrimesDiff = numPrimesDiff ** (1/2)
 
             distributionDiff += numPrimesDiff
             distributionMaxDiff += 1
