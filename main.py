@@ -27,7 +27,7 @@ import torch
 
 device = 'mps'
 
-enableML = False
+enableML = True
 
 """## Costum classes"""
 
@@ -162,7 +162,7 @@ class Agent:
             frame = game.get_frame()
             frame = np.array(frame)
             if frame.shape[0] > 0:
-                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0]* game.ideWidth*2))
+                prediction = self.model(torch.tensor(frame, dtype=torch.float32, device=device).view(1, frame.shape[0], game.ideWidth*2))
                 reqs.append(prediction.cpu().detach())
 
         return reqs
@@ -319,7 +319,7 @@ class Agent:
                                     for r in range(0, repeat):
                                         #modelsGen.trainInput(view, scoreWeight)
                                         self.optim.zero_grad()
-                                        tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2)
+                                        tensor = torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*2)
                                         pred = model(tensor)
                                         target = torch.tensor([[scoreWeight]], dtype=torch.float32).to(device=device)
                                         err = self.loss(pred, target)
@@ -351,7 +351,7 @@ class Agent:
                         for u in range(totElements, totElements + instrLen):
                             view = game.get_state(u + 1)
                             self.optim.zero_grad()
-                            pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0] * game.ideWidth*2))
+                            pred = model(torch.tensor(view, dtype=torch.float32).to(device=device).view(1, view.shape[0], game.ideWidth*2))
                             err = self.loss(pred, torch.tensor([[linesScores[i]]], dtype=torch.float32).to(device=device))
                             err.backward()
                             self.optim.step()
@@ -421,7 +421,7 @@ class Agent:
                     myPrint("random")
                     action = int(np.random.randint(0, game.nb_actions))
                 else:
-                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0]* game.ideWidth*2))
+                    q = model(torch.tensor(np.array([S]), dtype=torch.float32, device=device).view(1, S.shape[0], game.ideWidth*2))
                     q = q[0]
 
                     possible_actions = game.get_possible_actions()
@@ -1792,7 +1792,7 @@ class Calculon(Game):
         drawFocus = False
 
         elNumber = 0
-        for y in range(0, self.num_lines): # or self.focus_y+1
+        for y in range(0, self.focus_y+1): # or self.num_lines
             elNumber += 1
             line = []
 
