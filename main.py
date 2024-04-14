@@ -1925,7 +1925,7 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 200
+grid_size = 60
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
