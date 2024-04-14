@@ -237,6 +237,13 @@ for step in range(2, upTo):
         b1 = not b1
     isPrime = b1
 
+    #[["d$", 0, "DIV", "d#", 15, "d#", 8], ["d$", 1, "DIV", "d$", 0, "d#", 8], ["b$", 0, "GET", "d$", 1, "d#", 8]]
+    d0 = 0
+    if predictedNotPrimeProb > 0:
+        d0 = (1-effectivePrimeProb) / predictedNotPrimeProb
+        d1 = d0 / predictedNotPrimeProb
+    isPrime = d1 > predictedNotPrimeProb
+
     if chosen == 6:
         print("check")
 
