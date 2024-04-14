@@ -217,6 +217,26 @@ for step in range(2, upTo):
     #d0 = effectivePrimeProb * primeProb
     #isPrime = ifPrimePredictPrimeProb > d0
 
+    #[["d$", 0, "MOD", "d#", 14, "d#", 9], ["d$", 1, "ADD", "d$", 0, "d#", 3], ["b$", 0, "GT", "d#", 12, "d$", 0]]
+    d0 = effectiveIfPrimeProb % predictedPrimeProb
+    d1 = d0 + i
+    isPrime = quanto > d0
+
+    '''[["d$", 0, "DIV", "d#", 15, "d#", 8], ["d$", 1, "ADD", "d$", 0, "d#", 13], ["d$", 2, "MUL", "d$", 1, "d$", 0],
+     ["b$", 0, "GET", "d#", 15, "d$", 2], ["b$", 1, "GT", "d$", 2, "d#", 10], ["IF", "b$", 0],
+     ["b$", 1, "NOT", "b$", 1], ["END"]]'''
+
+    d0 = 0
+    if predictedNotPrimeProb != 0:
+        d0 = (1-effectivePrimeProb) / predictedNotPrimeProb
+    d1 = d0 + effectivePrimeProb
+    d2 = d1 * d0
+    b0 = (1-effectivePrimeProb) >= d2
+    b1 = d2 > ifPrimePredictNotPrimeProb
+    if b0:
+        b1 = not b1
+    isPrime = b1
+
     if chosen == 6:
         print("check")
 
