@@ -269,7 +269,7 @@ class Agent:
                     p = self.predictOptions(game)
                     a = 0
                     if len(p) > 0:
-                        a = int(np.argmax(p))
+                        a = int(np.argmin(p))
 
                 game.goDown(a)
 
@@ -1096,7 +1096,7 @@ def executeCycles(instructions, isPrimeVar=0):
         if True:
             effectiveNumPrimes = distribution[i - 1]
             numPrimesDiff = abs(numPrimes - effectiveNumPrimes) / step
-            numPrimesDiff = numPrimesDiff ** (1/3)
+            numPrimesDiff = numPrimesDiff ** (1/2)
 
             distributionDiff += numPrimesDiff
             distributionMaxDiff += 1
