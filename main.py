@@ -1792,7 +1792,7 @@ class Calculon(Game):
         drawFocus = False
 
         elNumber = 0
-        for y in range(0, self.num_lines): # or self.num_lines
+        for y in range(0, self.focus_y if self.focus_y > 0 else 1): # or self.num_lines
             elNumber += 1
             if elNumber > until:
                 break
