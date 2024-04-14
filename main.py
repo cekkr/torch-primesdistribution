@@ -1792,7 +1792,7 @@ class Calculon(Game):
         drawFocus = False
 
         elNumber = 0
-        for y in range(0, self.focus_y+1): # or self.num_lines
+        for y in range(0, until): # or self.num_lines
             elNumber += 1
             line = []
 
@@ -1932,7 +1932,7 @@ input_shape = (grid_size, game.ideWidth, els)
 totalDim = game.ideWidth * els
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 512, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 840, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))

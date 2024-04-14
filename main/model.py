@@ -9,7 +9,7 @@ class SuccessPredictorLSTM(nn.Module):
         self.hidden_layer_size = hidden_layer_size
 
         # LSTM layer: input_size is 7 because each timestep of our sequence has 7 features
-        self.lstm = nn.LSTM(input_size, hidden_layer_size, num_layers=4, batch_first=True)
+        self.lstm = nn.LSTM(input_size, hidden_layer_size, num_layers=6, batch_first=True)
 
         # Output layer
         self.linear = nn.Linear(hidden_layer_size, output_size)
