@@ -171,7 +171,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=1000000, epsilon=[1.0, 1.0], epsilon_rate=1.0, observe=0, checkpoint=10000,
+    def train(self, game, nb_epoch=100000, epsilon=[1.0, 0.0], epsilon_rate=1.0, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -1914,24 +1914,25 @@ class Calculon(Game):
 """# Execute"""
 
 ### Execution
-
+'''
 res = executeCycles([["d$", 0, "MOD", "d#", 5, "d#", 12], ["b$", 0, "NOT", "b#", 0], ["b$", 1, "OR", "b#", 1, "b$", 0],
      ["d$", 1, "ADD", "d$", 0, "d#", 1], ["d$", 2, "ADD", "d$", 0, "d#", 16], ["b$", 2, "CMP", "d#", 16, "d$", 2],
      ["IF", "b$", 0], ["b$", 1, "GET", "d#", 5, "d#", 3], ["b$", 1, "NOT", "b#", 1], ["b$", 0, "OR", "b#", 0, "b$", 1],
      ["d$", 2, "DIV", "d#", 2, "d$", 0], ["b$", 1, "GT", "d$", 1, "d$", 2], ["END"]],2)
+'''
 
 drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 100
+grid_size = 200
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
 totalDim = grid_size*game.ideWidth*els
 
 """## Run"""
-model = SuccessPredictorLinear(totalDim, 512, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 512, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
