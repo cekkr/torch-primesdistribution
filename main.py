@@ -1792,8 +1792,11 @@ class Calculon(Game):
         drawFocus = False
 
         elNumber = 0
-        for y in range(0, until): # or self.num_lines
+        for y in range(0, self.num_lines): # or self.num_lines
             elNumber += 1
+            if elNumber > until:
+                break
+
             line = []
 
             instruction = []
