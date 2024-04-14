@@ -546,15 +546,6 @@ storesNames = {}
 storesNamesAssoc = {}
 stores = {}
 
-
-def assocNames(names, storeType):
-    storesNames[storeType] = names
-    stores[storeType] = []
-
-    for name in names:
-        storesNamesAssoc[name] = storeType
-
-
 boolCostNames = [
     'false',
     'true',
@@ -595,21 +586,6 @@ decimalVarsNames = [
 ]
 
 engineFault = False
-
-
-def resetStores():
-    storesNames = {}
-    storesNamesAssoc = {}
-    stores = {}
-
-    assocNames(boolCostNames, 'b#')
-    assocNames(boolVarsNames, 'b$')
-    assocNames(decimalCostNames, 'd#')
-    assocNames(decimalVarsNames, 'd$')
-
-
-resetStores()
-
 
 def getNameType(name):
     if name in storesNamesAssoc:
@@ -710,6 +686,31 @@ def setStoreFields(fields, value):
     else:
         st[pos] = value
 
+def assocNames(names, storeType):
+    storesNames[storeType] = names
+    stores[storeType] = []
+
+    pos = 0
+    for name in names:
+        storesNamesAssoc[name] = storeType
+        setStoreFields([storeType, pos], False if storeType.startswith('b') else 0)
+        pos += 1
+
+def resetStores():
+    global storesNames
+    global stores
+    global storesNamesAssoc
+    storesNames = {}
+    storesNamesAssoc = {}
+    stores = {}
+
+    assocNames(boolCostNames, 'b#')
+    assocNames(boolVarsNames, 'b$')
+    assocNames(decimalCostNames, 'd#')
+    assocNames(decimalVarsNames, 'd$')
+
+
+resetStores()
 
 def getStoreFields(fields):
     if len(fields) != 2:
@@ -1127,7 +1128,7 @@ ideWidth = 7
 # Game options
 drawLineNumber = False
 dontAllowEndOnDepth0 = True
-forceAssignToNewVar = True
+forceAssignToNewVar = False
 allowAssign = True
 
 if not allowAssign:
@@ -1394,6 +1395,7 @@ class Calculon(Game):
         self.resetCurLine()
 
         self.focus_y += 1
+        self.focus_x = 0
 
         if self.focus_y >= self.num_lines:
             self.checkGameEnd()
@@ -1835,7 +1837,13 @@ class Calculon(Game):
         if self.lastBoolVarAssign != self.lastCalculatedBoolVar and self.lastBoolVarAssign != None:
             self.extractWinnerVarInstructions()
 
-            self.current_score = executeCycles(self.curWinnerInstructions, self.curWinnerInstructions_winner)
+            try:
+                self.current_score = executeCycles(self.curWinnerInstructions, self.curWinnerInstructions_winner)
+            except:
+                self.reset()
+                self.current_score = 10
+                print("STUPID FAULT")
+
             self.lastCalculatedBoolVar = self.lastBoolVarAssign
             self.lastCalculatedScoreLine = len(self.instructions)
 
