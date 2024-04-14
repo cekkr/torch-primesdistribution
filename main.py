@@ -315,7 +315,7 @@ class Agent:
                             for i in range(0, game.countInstructionsElements(isolatedInstructions)):
                                 view = game.get_state(i + 1, isolatedInstructions)
                                 if checkViewScore(view, scoreWeight):
-                                    repeat = int((20 * scoreWeight)+1)
+                                    repeat = int((20 * (1-scoreWeight))+1)
                                     for r in range(0, repeat):
                                         #modelsGen.trainInput(view, scoreWeight)
                                         self.optim.zero_grad()
