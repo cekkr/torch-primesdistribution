@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class SuccessPredictorLSTM(nn.Module):
-    def __init__(self, input_size=7, hidden_layer_size=128, output_size=1, device='cpu'):
+    def __init__(self, input_size=14, hidden_layer_size=128, output_size=1, device='cpu'):
         super(SuccessPredictorLSTM, self).__init__()
         self.hidden_layer_size = hidden_layer_size
 

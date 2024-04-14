@@ -1929,7 +1929,7 @@ grid_size = 200
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
-totalDim = grid_size*game.ideWidth*els
+totalDim = game.ideWidth * els
 
 """## Run"""
 model = SuccessPredictorLSTM(totalDim, 512, 1, device=device).to(device=device)
