@@ -1071,7 +1071,7 @@ def executeCycles(instructions, isPrimeVar=0):
         if True:
             effectiveNumPrimes = distribution[i - 1]
             numPrimesDiff = (numPrimes - effectiveNumPrimes) / step
-            numPrimesDiff = numPrimesDiff ** (1/2)
+            numPrimesDiff = numPrimesDiff ** (1/3)
 
             distributionDiff += numPrimesDiff
             distributionMaxDiff += 1
