@@ -58,6 +58,9 @@ for step in range(2, upTo):
     isPrime = False
     chosen = 0
 
+    ifPrimeProbPredictionTendency = predictedPrimeProb - ifPrimePredictPrimeProb
+    ifPrimeProbTendency = effectivePrimeProb - effectiveIfPrimeProb
+
     '''
     if False:
         d0 = primeProb + ifPrimePredictNotPrimeProb
@@ -268,6 +271,17 @@ for step in range(2, upTo):
     
     isPrime = isPrime0 or isPrime1
     '''
+
+    #[["b$", 0, "GT", "d#", 21, "d#", 13], ["b$", 1, "GT", "d#", 19, "d#", 17], ["IF", "b$", 0],
+    # ["b$", 1, "AND", "b$", 0, "b#", 0], ["END"], ["IF", "b$", 1], ["b$", 0, "ASSIGN", "b#", 3], ["END"]]
+    b0 = ifPrimeProbTendency > effectivePrimeProb
+    b1 = ifPrimeProbPredictionTendency > primeStamp
+    if b0:
+        b1 = False
+    if b1:
+        d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+        b0 = ifPrimePredictPrimeProb >= d0
+    isPrime = b0
 
     if step <= 13:
         isPrime = step in primers
