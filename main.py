@@ -575,6 +575,7 @@ boolVarsNames = [
 decimalCostNames = [
     'zero',
     'one',
+    'minusOne',
     'step',
     'i',
     'numPrimes',
@@ -947,6 +948,7 @@ def resetEngine():
 
     setStore('#zero', 0)
     setStore('#one', 1)
+    setStore('#minusOne', -1)
 
     setStore('#false', False)
     setStore('#true', True)
@@ -1034,7 +1036,7 @@ def executeCycles(instructions, isPrimeVar=0):
         ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
         ifPrimeProbPredictionTendency = predictedPrimeProb - ifPrimePredictPrimeProb
-        ifPrimeProbTendency = effectivePrimeProb - effectiveIfPrimeProb
+        ifPrimeProbTendency = effectiveIfPrimeProb - effectivePrimeProb
 
         d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
         isPrime0 = predictedPrimeProb > d0

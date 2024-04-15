@@ -59,7 +59,7 @@ for step in range(2, upTo):
     chosen = 0
 
     ifPrimeProbPredictionTendency = predictedPrimeProb - ifPrimePredictPrimeProb
-    ifPrimeProbTendency = effectivePrimeProb - effectiveIfPrimeProb
+    ifPrimeProbTendency = effectiveIfPrimeProb - effectivePrimeProb
 
     '''
     if False:
