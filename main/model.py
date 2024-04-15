@@ -12,7 +12,7 @@ class SuccessPredictorLSTM(nn.Module):
         self.lstm = nn.LSTM(input_size, hidden_layer_size, num_layers=6, batch_first=True)
 
         # Output layer
-        self.linear = nn.Linear(hidden_layer_size, output_size)
+        self.linear = nn.Linear(hidden_layer_size*2, output_size)
 
         self.activation = torch.nn.Sigmoid()
 
@@ -29,7 +29,8 @@ class SuccessPredictorLSTM(nn.Module):
         hidden = hidden[-1, :, :]
 
         # Pass through the output layer and apply sigmoid activation to get the probability
-        predictions = self.activation(self.linear(lstm_out))
+        merge = torch.cat([lstm_out, hidden], -1)
+        predictions = self.activation(self.linear(merge))
 
         return predictions
 

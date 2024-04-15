@@ -117,6 +117,18 @@ Forking code from https://github.com/farizrahman4u/qlearning4k
 
 batch_size = 30
 
+import torch
+
+
+def all_tensors_equal(tensor_list):
+    if not tensor_list:
+        return True  # Return True for an empty list
+
+    first_tensor = tensor_list[0]
+    for tensor in tensor_list[1:]:
+        if not torch.equal(first_tensor, tensor):
+            return False
+    return True
 
 class Agent:
 
@@ -171,7 +183,7 @@ class Agent:
         usedRam = psutil.virtual_memory()[2]  # in %
         return usedRam > 75
 
-    def train(self, game, nb_epoch=100000, epsilon=[1.0, 0.0], epsilon_rate=1.0, observe=0, checkpoint=100,
+    def train(self, game, nb_epoch=30000, epsilon=[1.0, 0.0], epsilon_rate=1.0, observe=0, checkpoint=100,
               weighedScore=False):
         if type(epsilon) in {tuple, list}:
             delta = ((epsilon[0] - epsilon[1]) / (nb_epoch * epsilon_rate))
@@ -269,7 +281,10 @@ class Agent:
                     p = self.predictOptions(game)
                     a = 0
                     if len(p) > 0:
-                        a = int(np.argmin(p))
+                        if all_tensors_equal(p):
+                            a = np.random.randint(len(p))
+                        else:
+                            a = int(np.argmin(p))
 
                 game.goDown(a)
 
@@ -1928,14 +1943,14 @@ drawFocus = False
 els = 3 if drawFocus else 2
 
 actions = 1
-grid_size = 60
+grid_size = 80
 game = Calculon(grid_size)
 input_shape = (grid_size, game.ideWidth, els)
 
 totalDim = game.ideWidth * els
 
 """## Run"""
-model = SuccessPredictorLSTM(totalDim, 840, 1, device=device).to(device=device)
+model = SuccessPredictorLSTM(totalDim, 1024, 1, device=device).to(device=device)
 
 if os.path.exists('outputs/model.pth'):
     model.load_state_dict(torch.load('outputs/model.pth'))
