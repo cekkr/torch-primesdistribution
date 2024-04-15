@@ -590,10 +590,11 @@ decimalCostNames = [
     'effectiveIfPrimeProb',
     'effectivePrimeNotProb',
     'effectiveIfPrimeNotProb',
-    #'quantoSum',
-    #'primeQuantoSum',
     'primeStamp',
-    #'lastPrimeDistance'
+    'probPredictionTendency',
+    'ifPrimeProbPredictionTendency',
+    'probTendency',
+    'ifPrimeProbTendency',
 ]
 
 decimalVarsNames = [
@@ -1032,6 +1033,9 @@ def executeCycles(instructions, isPrimeVar=0):
         ifPrimePredictPrimeProb -= primeStamp
         ifPrimePredictNotPrimeProb = 1 - ifPrimePredictPrimeProb
 
+        ifPrimeProbPredictionTendency = predictedPrimeProb - ifPrimePredictPrimeProb
+        ifPrimeProbTendency = effectivePrimeProb - effectiveIfPrimeProb
+
         d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
         isPrime0 = predictedPrimeProb > d0
 
@@ -1051,6 +1055,9 @@ def executeCycles(instructions, isPrimeVar=0):
 
         setStore('#isPrime0', isPrime0)
         setStore('#isPrime1', isPrime1)
+
+        setStore('#ifPrimeProbPredictionTendency', ifPrimeProbPredictionTendency)
+        setStore('#ifPrimeProbTendency', ifPrimeProbTendency)
 
         setStore('$jumpBy', 0)
 
@@ -1081,6 +1088,11 @@ def executeCycles(instructions, isPrimeVar=0):
             predictedNotPrimeProb = ifPrimePredictNotPrimeProb
             predictedPrimeProb = ifPrimePredictPrimeProb
 
+            setStore('#probPredictionTendency', ifPrimeProbPredictionTendency)
+            setStore('#probTendency', ifPrimeProbTendency)
+            setStore('#predictedNotPrimeProb', predictedNotPrimeProb)
+            setStore('#predictedPrimeProb', predictedPrimeProb)
+
             primeQuantoSum += quanto
 
         primeProb = numPrimes / (step)
@@ -1102,8 +1114,6 @@ def executeCycles(instructions, isPrimeVar=0):
 
         setStore('#numPrimes', numPrimes)
         setStore('#lastPrime', lastPrime)
-        setStore('#predictedNotPrimeProb', predictedNotPrimeProb)
-        setStore('#predictedPrimeProb', predictedPrimeProb)
         setStore('#primeProb', primeProb)
         setStore('#notPrimeProb', notPrimeProb)
         setStore('#step', step)

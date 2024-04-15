@@ -1,5 +1,5 @@
 
-upTo = 1000
+upTo = 10000
 
 prime_numbers = []
 numIsPrime = []
@@ -37,6 +37,8 @@ lastPrime = 1
 accVar0 = 0
 
 d1 = False
+
+primers = [2, 3, 5, 7, 11, 13]
 
 for step in range(2, upTo):
     i = step - 1
@@ -252,13 +254,23 @@ for step in range(2, upTo):
     #[["d$", 0, "ASSIGN", "d#", 15], ["b$", 0, "CMP", "d#", 3, "d$", 0], ["b$", 1, "DEFAULT", "b$", 0], ["IF", "b$", 1], ["b$", 0, "AND", "b#", 1, "b#", 3], ["END"]]
 
     d0 = effectivePrimeProb - ifPrimePredictPrimeProb
-    isPrime = ifPrimePredictPrimeProb > d0
-
-    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
     isPrime = ifPrimePredictPrimeProb >= d0
 
     #if step % 2 == 0 and step > 2:
     #    isPrime = isPrime and not isNotPrime
+
+    '''
+    d0 = predictedNotPrimeProb - ifPrimePredictPrimeProb
+    isPrime0 = predictedPrimeProb > d0
+
+    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+    isPrime1 = ifPrimePredictPrimeProb >= d0
+    
+    isPrime = isPrime0 or isPrime1
+    '''
+
+    if step <= 13:
+        isPrime = step in primers
 
     if chosen == 6:
         print("check")
