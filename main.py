@@ -27,7 +27,7 @@ import torch
 
 device = 'mps'
 
-enableML = True
+enableML = False
 
 """## Costum classes"""
 
@@ -1010,6 +1010,8 @@ def executeCycles(instructions, isPrimeVar=0):
 
     jumpBy = 0
 
+    primers = [2, 3, 5, 7, 11, 13] # incipit
+
     while (step <= upTo):
         i = step - 1
         quanto = 1 / step
@@ -1064,8 +1066,11 @@ def executeCycles(instructions, isPrimeVar=0):
             ### End cycle
             ###
 
-
             isPrime = getStoreFields(['b$', isPrimeVar])
+
+            if step <= 13:
+                isPrime = step in primers
+
         else:
             jumpBy -= 1
 
@@ -1083,7 +1088,7 @@ def executeCycles(instructions, isPrimeVar=0):
 
         lastPrime += 1
 
-        if jumpBy == 0:
+        if jumpBy == 0 and False:
             jumpBy = getStore('$jumpBy')
             try:
                 jumpBy = int(jumpBy)

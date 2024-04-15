@@ -1,5 +1,5 @@
 
-upTo = 200
+upTo = 1000
 
 prime_numbers = []
 numIsPrime = []
@@ -33,6 +33,8 @@ ifPrimePredictPrimeProb = 1
 ifPrimePredictNotPrimeProb = 0
 numPrimes = 0
 lastPrime = 1
+
+accVar0 = 0
 
 d1 = False
 
@@ -220,12 +222,13 @@ for step in range(2, upTo):
     #[["d$", 0, "MOD", "d#", 14, "d#", 9], ["d$", 1, "ADD", "d$", 0, "d#", 3], ["b$", 0, "GT", "d#", 12, "d$", 0]]
     d0 = effectiveIfPrimeProb % predictedPrimeProb
     d1 = d0 + i
-    isPrime = quanto > d0
+    isNotPrime = quanto <= d0
 
     '''[["d$", 0, "DIV", "d#", 15, "d#", 8], ["d$", 1, "ADD", "d$", 0, "d#", 13], ["d$", 2, "MUL", "d$", 1, "d$", 0],
      ["b$", 0, "GET", "d#", 15, "d$", 2], ["b$", 1, "GT", "d$", 2, "d#", 10], ["IF", "b$", 0],
      ["b$", 1, "NOT", "b$", 1], ["END"]]'''
 
+    '''
     d0 = 0
     if predictedNotPrimeProb != 0:
         d0 = (1-effectivePrimeProb) / predictedNotPrimeProb
@@ -236,24 +239,33 @@ for step in range(2, upTo):
     if b0:
         b1 = not b1
     isPrime = b1
+    '''
 
     #[["d$", 0, "DIV", "d#", 15, "d#", 8], ["d$", 1, "DIV", "d$", 0, "d#", 8], ["b$", 0, "GET", "d$", 1, "d#", 8]]
+    '''
     d0 = 0
     if predictedNotPrimeProb > 0:
         d0 = (1-effectivePrimeProb) / predictedNotPrimeProb
         d1 = d0 / predictedNotPrimeProb
-    isPrime = d1 > predictedNotPrimeProb
+    isPrime = d1 >= predictedNotPrimeProb
+    '''
+    #[["d$", 0, "ASSIGN", "d#", 15], ["b$", 0, "CMP", "d#", 3, "d$", 0], ["b$", 1, "DEFAULT", "b$", 0], ["IF", "b$", 1], ["b$", 0, "AND", "b#", 1, "b#", 3], ["END"]]
 
-    #isPrime = (1-effectiveIfPrimeProb) >= ifPrimePredictNotPrimeProb
+    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+    isPrime = ifPrimePredictPrimeProb > d0
 
-    isPrime = (1-effectiveIfPrimeProb) >= ifPrimePredictNotPrimeProb
+    d0 = effectivePrimeProb - ifPrimePredictPrimeProb
+    isPrime = ifPrimePredictPrimeProb >= d0
+
+    #if step % 2 == 0 and step > 2:
+    #    isPrime = isPrime and not isNotPrime
 
     if chosen == 6:
         print("check")
 
     chosens.append(chosen)
 
-    isPrime = isPrime1
+    #isPrime = isPrime1
 
     if isPrime:
         predictedPrimeProb = ifPrimePredictPrimeProb
