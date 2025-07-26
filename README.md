@@ -205,5 +205,5 @@ isPrime = primeProb > d3
 ```
 
 ## Notes and todos
-- Remember to implement (in a project a part) the biniomal "genetic" recursive models shaper
+- Remember to implement (in a project a part) the biniomal "genetic" recursive models shaper (to riccardo of the future: model that shapes the model that aims to the dataset while first model is shaped in based of best advantages in evolving the second model)
 - In this strictly case, bool and decimal may be merged in just decimals, but using booleans allow a more conveyed use of the code.
