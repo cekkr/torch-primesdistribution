@@ -190,4 +190,14 @@ They both take just 1 argument of the same type.
 
 The reason of `LT` and `LET` removement it's that the same result could be obtained with an `GT` and `GET` inverting the arguments order.
 
+## Best result
 
+```
+[["d$", 0, "SUB", "d#", 6, "d#", 11], ["d$", 1, "DEFAULT", "d#", 5], ["d$", 2, "MUL", "d#", 8, "d$", 0], ["b$", 0, "GET", "d#", 7, "d$", 2], ["d$", 3, "ADD", "d$", 2, "d$", 0], ["b$", 1, "GT", "d$", 3, "d#", 7], ["d$", 4, "SUB", "d#", 6, "d$", 1], ["b$", 2, "GT", "d$", 4, "d$", 3]]
+
+
+d0 = primeProb - ifPrimePredictPrimeProb
+d2 = predictedNotPrimeProb + d0
+d3 = d2 + d0
+isPrime = primeProb > d3
+```
